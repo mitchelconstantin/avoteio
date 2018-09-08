@@ -1,2 +1,2 @@
 # avoteio
-the world's best voting app 
+the world's most adequate app 
