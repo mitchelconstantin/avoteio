@@ -1,24 +1,18 @@
-const pg = require('pg');
+const mysql = require('mysql');
 
-const connection = new pg.Client({
-    user: 'ykflbsnrqqyhgs',
-    password: process.env.DB_PASSWORD,
-    database: 'd22lnt48uqb9st',
-    port: 5432,
-    host: 'ec2-54-227-241-179.compute-1.amazonaws.com',
-    ssl: true
-});
+var connection = mysql.createConnection({
+    host     : 'bbj31ma8tye2kagi.cbetxkdyhwsb.us-east-1.rds.amazonaws.com',
+    user     : 'yocqduprp1mltiz3',
+    password : 'd5t9cuu1l8i2uqav',
+    database : 'fysv1ohxudop09ay',
+    port: 3306
+  });
+  
+connection.connect((err)=>{
+    if(err) throw err;
+    console.log('woohoo connected!')
+})
 
-
-
-connection.connect((err) =>{
-    if (err) {
-        console.log(err);
-    } else {
-        console.log('woohoo connected');
-    }
-});
-
-
+connection.end();
 module.exports = connection;
 
