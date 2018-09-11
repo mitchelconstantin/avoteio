@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import {data} from '../../dummy_data.js';
-import SearchBar from './SearchBar.jsx';
+import SearchBar from './Search/SearchBar.jsx';
 import SongList from './SongList.jsx';
 import Song from './Song.jsx'
 
@@ -9,7 +9,8 @@ class Main extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      songBank: []
+      songBank: [],
+      roomID: 1
     };
     this.updateSongBank = this.updateSongBank.bind(this);
     this.dropdownSongs = this.dropdownSongs.bind(this);
@@ -41,8 +42,9 @@ class Main extends Component {
     
   } 
 
-  dropdownSongs () {
-    console.log('here are the WUBDUBS',this.state.songBank)
+  getAllSongs () {
+    //make a get request to server
+     
   }
 
   render() {
@@ -52,7 +54,7 @@ class Main extends Component {
       <div>
         <h1>Howdy, World!</h1>
         <SongList songBank= {this.state.songBank} dropdownSongs={this.dropdownSongs}/>
-        <SearchBar updateSongBank={this.updateSongBank}/>
+        <SearchBar updateSongBank={this.updateSongBank} roomID={this.state.roomID}/>
       </div>
     )
   }
