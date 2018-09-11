@@ -13,6 +13,7 @@ class SearchBar extends Component {
       };
       this.handleInputChange = this.handleInputChange.bind(this);
       this.handleClick = this.handleClick.bind(this);
+      this.selectSong = this.selectSong.bind(this)
     }
 
     handleInputChange (e) {
@@ -44,13 +45,24 @@ class SearchBar extends Component {
           })
     }
 
-    selectSong () {
+    selectSong (input) {
         //post a song to the DB
+        // axios.post('/saveSong',{
+        //   roomID:this.props.roomID,
+        //   song: input
+        // }).then(function(response){
+        //   console.log(response)
+        // }).catch(function(error){
+        //   console.log(error)
+        // })
+
+
+        //get all songs
         
+        this.props.getAllSongs()
     }
   
     render() {
-      // console.log(data.tracks.items);
       return (
        <div>
            {/* {console.log('here are search props',this.props)} */}
@@ -58,7 +70,7 @@ class SearchBar extends Component {
                <input type="text" value={this.state.input} onChange={this.handleInputChange} />
                <button onClick={(e)=>this.handleClick(e)}>button</button>
 
-               <DropdownSongList spotifyResults={this.state.spotifyResults}/>
+               <DropdownSongList spotifyResults={this.state.spotifyResults} selectSong={this.selectSong}/>
            </form>
        </div>
       );

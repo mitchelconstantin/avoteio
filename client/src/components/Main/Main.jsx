@@ -13,7 +13,23 @@ class Main extends Component {
       roomID: 1
     };
     this.updateSongBank = this.updateSongBank.bind(this);
-    this.dropdownSongs = this.dropdownSongs.bind(this);
+    this.getAllSongs = this.getAllSongs.bind(this);
+  }
+
+
+  getAllSongs () {
+    // e.preventDefault()
+    //make a get request to server
+
+    //  axios.get('/getAllSongs',{
+    //    roomID:this.state.roomID
+    //  }).then(function(response){
+    //    console.log(response)
+    //  }).catch(function(error){
+    //    console.log(error)
+    //  })
+
+    console.log('I am getting all Songs!')
   }
 
   updateSongBank (input) {
@@ -42,10 +58,7 @@ class Main extends Component {
     
   } 
 
-  getAllSongs () {
-    //make a get request to server
-     
-  }
+  
 
   render() {
     
@@ -54,7 +67,7 @@ class Main extends Component {
       <div>
         <h1>Howdy, World!</h1>
         <SongList songBank= {this.state.songBank} dropdownSongs={this.dropdownSongs}/>
-        <SearchBar updateSongBank={this.updateSongBank} roomID={this.state.roomID}/>
+        <SearchBar updateSongBank={this.updateSongBank} roomID={this.state.roomID} getAllSongs={this.getAllSongs}/>
       </div>
     )
   }
