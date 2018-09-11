@@ -19,6 +19,9 @@ class SearchBar extends Component {
     handleClick(e) {
         e.preventDefault()
         this.props.updateSongBank(this.state.input)
+        //get request from spotify
+        //on success:
+          //figure out a way to render the top 5 results from Spotify
     }
   
     render() {
@@ -27,7 +30,7 @@ class SearchBar extends Component {
        <div>
            {/* {console.log('here are search props',this.props)} */}
            <form action=""  >
-               <input type="text" value={this.state.input} onChange={this.handleInputChange} onClick={this.handleClick}/>
+               <input type="text" value={this.state.input} onChange={this.handleInputChange} />
                <button onClick={(e)=>this.handleClick(e)}>button</button>
            </form>
        </div>
