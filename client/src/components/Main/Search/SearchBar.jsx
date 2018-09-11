@@ -26,6 +26,17 @@ class SearchBar extends Component {
         //update the main songBank from Database
         e.preventDefault()
         this.props.updateSongBank(this.state.input)
+
+
+        // axios.get('/api/spotify/search'
+        // ).then(function(response){
+          // this.setState({
+          //   spotifyResults:response
+          // })
+        //   console.log(response)
+        // }).catch(function(error){
+        //   console.log(error)
+        // })
         
         //populate dropdown menu
         //get request from spotify
@@ -43,15 +54,21 @@ class SearchBar extends Component {
           this.setState({
             spotifyResults:spotifyResults
           })
+
+
     }
 
-    selectSong (input) {
+    selectSong (songObj) {
         //post a song to the DB
-        // axios.post('/saveSong',{
+
+        // axios.post('/api/saveSong',{
         //   roomID:this.props.roomID,
-        //   song: input
+        //   song: songObj
         // }).then(function(response){
-        //   console.log(response)
+
+          // this.props.getAllSongs()
+          
+          //   console.log(response)
         // }).catch(function(error){
         //   console.log(error)
         // })
@@ -59,7 +76,6 @@ class SearchBar extends Component {
 
         //get all songs
         
-        this.props.getAllSongs()
     }
   
     render() {

@@ -21,14 +21,17 @@ class Main extends Component {
     // e.preventDefault()
     //make a get request to server
 
-    //  axios.get('/getAllSongs',{
-    //    roomID:this.state.roomID
-    //  }).then(function(response){
-    //    console.log(response)
-    //  }).catch(function(error){
-    //    console.log(error)
-    //  })
-
+      //  axios.get('/getAllSongs',{
+      //    roomID:this.state.roomID
+      //  }).then(function(response){
+        
+      //    console.log(response)
+      //  }).catch(function(error){
+      //    console.log(error)
+      //  })
+    // this.setState({
+    //   songBank
+    // })
     console.log('I am getting all Songs!')
   }
 

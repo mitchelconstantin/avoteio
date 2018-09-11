@@ -22,11 +22,13 @@ class CreateRoom extends Component {
   handleClick(e) {
     //update the main songBank from Database
     e.preventDefault()
+    this.props.setRoomID(2)
 
     //axios.post('/createRoom', {
 //    roomName:''
 //   })
 //   .then(function (response) {
+    // this.props.setRoomID(response)
 //     console.log(response);
 //   })
 //   .catch(function (error) {
@@ -40,6 +42,7 @@ class CreateRoom extends Component {
     return (
      <div>
          {/* {console.log('here are search props',this.props)} */}
+         <h1>Create A Room</h1>
          <form action=""  >
              <input type="text" value={this.state.input} onChange={this.handleInputChange} />
              <button onClick={(e)=>this.handleClick(e)}>button</button>
