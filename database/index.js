@@ -186,6 +186,7 @@ module.exports = {
     showAllSongsInRoom,
     getSongsId,
     addSongToRoom,
+    addSongToSongsTable,
     addRoom,
     markSongAsPlayed,
     markRoomAsInaccessible,

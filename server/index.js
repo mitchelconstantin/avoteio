@@ -2,14 +2,11 @@ require('dotenv').config();
 
 const express = require('express');
 const bodyParser = require('body-parser');
-<<<<<<< HEAD
-const routes = require('./routes.js');
-=======
+// const routes = require('./routes.js');
 const apiRoutes = require('./routes/apiRoutes');
 const authRoutes = require('./routes/authRoutes');
-const db = require('../database/index');
->>>>>>> 843d5365795628f252b1c6e5277a6ed3554ca47b
 
+const db = require('../database/index');
 const app = express();
 
 app.use(bodyParser.json());

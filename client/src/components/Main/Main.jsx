@@ -22,16 +22,18 @@ class Main extends Component {
     // e.preventDefault()
     // make a get request to server
 
-      //  axios.get('/getAllSongs',{
-      //    roomID:this.state.roomID
-      //  }).then(function(response){
-          // this.setState({
-      //       songBank: response
-    // })
-      //    console.log(response)
-      //  }).catch(function(error){
-      //    console.log(error)
-      //  })
+  //   axios.get('/api/rooms/getAllSongs',{
+  //     params: {
+  //      roomID:this.state.roomID
+  //     }
+  //    }).then(function(response){
+  //       // this.setState({
+  //       //   songBank: response
+  // // })
+  //      console.log('getAllSongs Success!',response)
+  //    }).catch(function(error){
+  //      console.log(error)
+  //    })
   
     console.log('I am getting all Songs!')
   }
@@ -60,7 +62,7 @@ class Main extends Component {
       songBank:songBank
     })
 
-     axios.get('/api/rooms/getAllSongs',{
+     axios.get('/api/getAllSongs',{
         params: {
          roomID:this.state.roomID
         }

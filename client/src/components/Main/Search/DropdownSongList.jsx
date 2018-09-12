@@ -3,10 +3,11 @@ import DropdownSong from './DropdownSong.jsx'
 
 const DropdownSongList = (props) => (
       <div>
-        {props.spotifyResults.map( (song,index)=> <DropdownSong title={song.title} artist={song.artist} key={index} selectSong={props.selectSong} song={song}   / >)}
+        {console.log('here are my songlist props',props)}
+        {props.spotifyResults.map( (song,index)=> <DropdownSong song={song}   selectSong={props.selectSong}  key={index} / >)}
       </div>
   
-    
+   
 )
 
 
