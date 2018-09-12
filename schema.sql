@@ -9,6 +9,7 @@ DROP TABLE IF EXISTS `rooms`;
 CREATE TABLE `rooms` (
 	`id` INT NOT NULL AUTO_INCREMENT,
 	`name` varchar(250) NOT NULL,
+	`isAccessible` bit NOT NULL DEFAULT 1,
 	PRIMARY KEY (`id`)
 );
 
@@ -18,6 +19,7 @@ CREATE TABLE `songs` (
 	`title` varchar(250) NOT NULL,
 	`artist` varchar(250) NOT NULL,
     `image` varchar(255) DEFAULT NULL,
+	`spotify_id` varchar(250) DEFAULT NULL,
 	PRIMARY KEY (`id`)
 );
 
@@ -28,6 +30,7 @@ CREATE TABLE `songs_rooms` (
 	`room_id` INT NOT NULL,
 	`upvote` INT NOT NULL DEFAULT 0,
 	`downvote` INT NOT NULL DEFAULT 0,
+	`isPlayed` bit NOT NULL DEFAULT 0,
 	PRIMARY KEY (`id`)
 );
 
