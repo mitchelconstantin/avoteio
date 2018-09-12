@@ -3,7 +3,6 @@ require('dotenv').config();
 const express = require('express');
 const bodyParser = require('body-parser');
 const routes = require('./routes.js');
-const db = require('../database/index.js');
 
 const app = express();
 
@@ -21,13 +20,4 @@ app.listen(port, () => {
 });
 
 
-app.get('/test', (req, res) => {
-  db.addRoom('Library Testing Day', (err, results) => {
-    if (err) {
-      console.log(err);
-    } else {
-      console.log(results)
-      res.send(results);
-    }
-  })
-})
+

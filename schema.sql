@@ -19,6 +19,7 @@ CREATE TABLE `songs` (
 	`title` varchar(250) NOT NULL,
 	`artist` varchar(250) NOT NULL,
     `image` varchar(255) DEFAULT NULL,
+	`spotify_id` varchar(250) DEFAULT NULL,
 	PRIMARY KEY (`id`)
 );
 

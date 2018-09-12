@@ -15,11 +15,11 @@ var connection = mysql.createConnection({
           } else {
               callback(null, results);
           }
-      })
+      });
   }
 
   const addSongToSongsTable = (songObj, callback) => {
-      connection.query('INSERT INTO songs (title, artist) VALUES (?, ?)', [songObj.title, songObj.artist], (err, results) => {
+      connection.query('INSERT INTO songs (title, artist, spotify_id) VALUES (?, ?, ?)', [songObj.name, songObj.artists[0].name, songObj.id], (err, results) => {
           if (err) {
               callback(err);
           } else {
@@ -29,7 +29,7 @@ var connection = mysql.createConnection({
   }
 
   const getSongsId = (songObj, callback) => {
-      connection.query('SELECT id FROM songs WHERE title = ? AND artist = ?', [songObj.title, songObj.artist], (err, results) => {
+      connection.query('SELECT id FROM songs WHERE songs.spotify_id = ?', [songObj.id], (err, results) => {
         if (err) {
             callback(err);
         } else {
@@ -39,7 +39,7 @@ var connection = mysql.createConnection({
   }
 
   const addSongToRoom = (songObj, roomId, callback) => {
-      connection.query('SELECT * FROM songs WHERE songs.title = ? AND songs.artist = ?', [songObj.title, songObj.artist], (err, results) => {
+      connection.query('SELECT * FROM songs WHERE songs.spotify_id = ?', [songObj.id], (err, results) => {
           if (err) {
               callback(err);
           } else {
@@ -48,6 +48,7 @@ var connection = mysql.createConnection({
                       if (err) {
                           callback(err);
                       } else {
+
                           getSongsId(songObj, (err, results) => {
                               if (err) {
                                   callback(err);
@@ -86,6 +87,7 @@ var connection = mysql.createConnection({
                                     })
                                     
                                 } else {
+                                    callback(null, 'already added to the room');
                                     console.log('already added to the room');
                                 }
                             }
@@ -110,6 +112,67 @@ var connection = mysql.createConnection({
     })
   };
 
+  const markSongAsPlayed = (songObj, roomId, callback) => {
+      getSongsId(songObj, (err, results) => {
+          if (err) {
+              callback(err);
+          } else {
+              const id = results[0].id;
+              connection.query('UPDATE songs_rooms SET isPlayed = 1 WHERE song_id = ? AND room_id = ?', [id, roomId], (err, results) => {
+                if (err) {
+                    callback(err);
+                } else {
+                    callback(null, results);
+                }
+              })
+          }
+      })
+  };
+
+  const markRoomAsInaccessible = (roomId, callback) => {
+      connection.query('UPDATE rooms SET isAccessible = 0 WHERE id = ?', [roomId], (err, results) => {
+          if (err) {
+              callback(err);
+          } else {
+              callback(null, results);
+          }
+      })
+  };
+
+  const upvote = (songObj, roomId, callback) => {
+      getSongsId(songObj, (err, results) => {
+          if (err) {
+              callback(err);
+          } else {
+              const id = results[0].id;
+              connection.query('UPDATE songs_rooms SET upvote = upvote + 1 WHERE song_id = ? AND room_id = ?', [id, roomId], (err, results) => {
+                  if (err) {
+                      callback(err);
+                  } else {
+                      callback(null, results);
+                  }
+              })
+          }
+      })
+  };
+
+  const downvote = (songObj, roomId, callback) => {
+    getSongsId(songObj, (err, results) => {
+        if (err) {
+            callback(err);
+        } else {
+            const id = results[0].id;
+            connection.query('UPDATE songs_rooms SET downvote = downvote + 1 WHERE song_id = ? AND room_id = ?', [id, roomId], (err, results) => {
+                if (err) {
+                    callback(err);
+                } else {
+                    callback(null, results);
+                }
+            })
+        }
+    })
+};
+
   
   
 
@@ -123,7 +186,11 @@ module.exports = {
     showAllSongsInRoom,
     getSongsId,
     addSongToRoom,
-    addRoom
+    addRoom,
+    markSongAsPlayed,
+    markRoomAsInaccessible,
+    upvote,
+    downvote
 
 };
 
