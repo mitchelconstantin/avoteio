@@ -3,6 +3,7 @@ import {data} from '../../dummy_data.js';
 import SearchBar from './Search/SearchBar.jsx';
 import SongList from './SongList.jsx';
 import Song from './Song.jsx'
+import axios from 'axios'; 
 
 
 class Main extends Component {
@@ -19,19 +20,19 @@ class Main extends Component {
 
   getAllSongs () {
     // e.preventDefault()
-    //make a get request to server
+    // make a get request to server
 
       //  axios.get('/getAllSongs',{
       //    roomID:this.state.roomID
       //  }).then(function(response){
-        
+          // this.setState({
+      //       songBank: response
+    // })
       //    console.log(response)
       //  }).catch(function(error){
       //    console.log(error)
       //  })
-    // this.setState({
-    //   songBank
-    // })
+  
     console.log('I am getting all Songs!')
   }
 
@@ -58,6 +59,19 @@ class Main extends Component {
     this.setState({
       songBank:songBank
     })
+
+     axios.get('/api/rooms/getAllSongs',{
+        params: {
+         roomID:this.state.roomID
+        }
+       }).then(function(response){
+          // this.setState({
+          //   songBank: response
+    // })
+         console.log('getAllSongs Success!',response)
+       }).catch(function(error){
+         console.log(error)
+       })
     
   } 
 
