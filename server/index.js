@@ -21,6 +21,13 @@ app.listen(port, () => {
 });
 
 
-app.get('/', (req, res) => {
-  db.query('SELECT * ')
+app.get('/test', (req, res) => {
+  db.addRoom('Library Testing Day', (err, results) => {
+    if (err) {
+      console.log(err);
+    } else {
+      console.log(results)
+      res.send(results);
+    }
+  })
 })
