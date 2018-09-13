@@ -8,6 +8,7 @@ const apiRoutes = require('./routes/api/apiRoutes');
 const authRoutes = require('./routes/spotify/authRoutes');
 // const db = require('../database/index');
 
+const db = require('../database/index');
 const app = express();
 
 app.use(bodyParser.json());
