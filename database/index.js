@@ -187,20 +187,20 @@ const downvoteSongInRoom = (songObj, roomId, callback) => {
 };
 
 const addUser = (userObj, callback) => {
-  connection.query('SELECT * FROM users WHERE spotify_id = ?', [userObj.spotify_id], (err, results) => {
+  connection.query('SELECT * FROM users WHERE spotify_id = ?', [userObj.spotify_id], (err, existingUser) => {
     if (err) {
       callback(err);
     } else {
-      if (results.length === 0) {
+      if (existingUser.length === 0) {
         connection.query('INSERT INTO users (spotify_id, spotify_display_name, access_token, refresh_token, token_expires_at) VALUES (?, ?, ?, ? ,?)', [userObj.spotify_id, userObj.spotify_display_name, userObj.access_token, userObj.refresh_token, userObj.token_expires_at], (err, results) => {
           if (err) {
             callback(err);
           } else {
-            callback(results);
+            callback(null, results);
           }
         })
       } else {
-        callback(null, 'user already exists');
+        callback(null, existingUser);
       }
     }
   });
