@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { Link, Route, Redirect, withRouter } from 'react-router-dom';
 import axios from 'axios';
 
 class CreateRoom extends Component {
@@ -17,7 +18,6 @@ class CreateRoom extends Component {
     .then(({ data }) => {
       console.log('user id is: ',data);
       this.props.setUserID(data);
-      this.props.history.push(`/rooms/${data}`);
     })
     .catch(error => {
       console.log(error);
@@ -37,10 +37,10 @@ class CreateRoom extends Component {
     axios.post('/api/createRoom', {
       roomName: this.state.input
     })
-    .then(roomID => {
-      console.log(roomID);
-      this.props.setRoomID(roomID);
-
+    .then(({data}) => {
+      console.log(data);
+      this.props.setRoomID(data);
+      this.props.history.push(`/rooms/${data}`);
     })
     .catch(error => {
       console.log(error);
@@ -64,12 +64,14 @@ class CreateRoom extends Component {
     return (
      <div>
         {component}
-        <h3>Or join an existing room</h3>
-        <input type="text" placeholder="Enter a room code..."/>
-        <button>Join Room</button>
+        <div>
+          <h3>Or join an existing room</h3>
+          <input type="text" placeholder="Enter a room code..."/>
+          <button>Join Room</button>
+        </div>
      </div>
     );
   }
 }
 
-export default CreateRoom;
+export default withRouter(CreateRoom);
