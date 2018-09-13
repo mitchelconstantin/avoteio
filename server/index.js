@@ -35,7 +35,8 @@ app.use('/api', apiRoutes);
 app.use('/auth', authRoutes);
 
 app.get('/rooms/:roomId', (req, res) => {
-  console.log(req.params);
+  // console.log(req.params);
+  res.send();
 });
 
 app.get('/*', (req, res) => {
