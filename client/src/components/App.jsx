@@ -1,8 +1,7 @@
 import React, { Component } from 'react';
+import { Link, Route, Redirect, withRouter } from 'react-router-dom';
 import Main from './Main/Main.jsx'
 import CreateRoom from './CreateRoom.jsx'
-
-
 
 class App extends Component {
   constructor(props) {
@@ -19,33 +18,38 @@ class App extends Component {
   changeCurrentPage (newPage) {
     this.setState({
       currentPage: newPage
-    })
+    });
   }
 
   setRoomID (roomID) {
     this.setState({
       roomID:roomID
-    })
+    });
   }
 
   render() {
-    let component;
-    if(this.state.currentPage === 'Login') {
-      // component = <Login />
-    } else if (this.state.currentPage === 'CreateRoom') {
-      component = <CreateRoom changeCurrentPage={this.changeCurrentPage} setRoomID={this.setRoomID}/>
-    } else if (this.state.currentPage === 'Main') {
-      component = <Main />
-    }
-    // console.log(data.tracks.items);
+    // let component;
+    // if(this.state.currentPage === 'Login') {
+    //   // component = <Login />
+    // } else if (this.state.currentPage === 'CreateRoom') {
+    //   component = <CreateRoom changeCurrentPage={this.changeCurrentPage} setRoomID={this.setRoomID}/>
+    // } else if (this.state.currentPage === 'Main') {
+    //   component = <Main />
+    // }
+    // // console.log(data.tracks.items);
     return (
       <div>
-        
-        {component}
-        {console.log('here are my app state',this.state)}
+        <Route 
+          exact path='/'
+          component={CreateRoom}
+        />
+        <Route 
+          path='/rooms'
+          component={Main}
+        />
       </div>
-    )
+    );
   }
 }
 
-export default App;
+export default withRouter(App);
