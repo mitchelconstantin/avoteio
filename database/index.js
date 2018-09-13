@@ -8,6 +8,16 @@ var connection = mysql.createConnection({
   port: 3306
 });
 
+const getSongInRoom = (songObj, roomId) => {
+  connection.query('SELECT * FROM songs s INNER JOIN songs_rooms sr ON s.id = sr.song_id AND sr.room_id = ? AND s.id = (SELECT id FROM songs WHERE spotify_id = ?)', [roomId, songObj.id], (err, results) => {
+    if (err) {
+      callback(err);
+    } else {
+      callback(null, results);
+    }
+  });
+};
+
 const showAllSongsInRoom = (roomId, callback) => {
   connection.query('SELECT * FROM songs s INNER JOIN songs_rooms sr ON s.id = sr.song_id AND sr.room_id = ?', [roomId], (err, results) => {
     if (err) {
@@ -95,8 +105,18 @@ const addSongToRoom = (songObj, roomId, callback) => {
   });
 };
 
-const addRoom = (roomName, callback) => {
-  connection.query('INSERT INTO rooms (name) VALUES (?)', [roomName], (err, results, fields) => {
+const showAllUnplayedSongsInRoom = (roomId, callback) => {
+  connection.query('SELECT * FROM songs s INNER JOIN songs_rooms sr ON s.id = sr.song_id AND sr.room_id = ? AND sr.isPlayed = 0', [roomId], (err, results) => {
+    if (err) {
+      callback(err);
+    } else {
+      callback(null, results);
+    }
+  });
+}  
+
+const addRoom = (roomName, userSpotifyId, callback) => {
+  connection.query('INSERT INTO rooms (name, user_id) VALUES (?, (SELECT id FROM users WHERE spotify_id = ?))', [roomName, userSpotifyId], (err, results, fields) => {
     if (err) {
       callback(err);
     } else {
@@ -105,7 +125,7 @@ const addRoom = (roomName, callback) => {
   });
 };
 
-const markSongAsPlayed = (songObj, roomId, callback) => {
+const markSongAsPlayedInRoom = (songObj, roomId, callback) => {
   getSongsId(songObj, (err, results) => {
     if (err) {
       callback(err);
@@ -132,7 +152,7 @@ const markRoomAsInaccessible = (roomId, callback) => {
   });
 };
 
-const upvote = (songObj, roomId, callback) => {
+const upvoteSongInRoom = (songObj, roomId, callback) => {
   getSongsId(songObj, (err, results) => {
     if (err) {
       callback(err);
@@ -149,7 +169,7 @@ const upvote = (songObj, roomId, callback) => {
   });
 };
 
-const downvote = (songObj, roomId, callback) => {
+const downvoteSongInRoom = (songObj, roomId, callback) => {
   getSongsId(songObj, (err, results) => {
     if (err) {
       callback(err);
@@ -166,14 +186,81 @@ const downvote = (songObj, roomId, callback) => {
   });
 };
 
+const addUser = (userObj, callback) => {
+  connection.query('SELECT * FROM users WHERE spotify_id = ?', [userObj.spotify_id], (err, existingUser) => {
+    if (err) {
+      callback(err);
+    } else {
+      if (existingUser.length === 0) {
+        connection.query('INSERT INTO users (spotify_id, spotify_display_name, access_token, refresh_token, token_expires_at) VALUES (?, ?, ?, ? ,?)', [userObj.spotify_id, userObj.spotify_display_name, userObj.access_token, userObj.refresh_token, userObj.token_expires_at], (err, results) => {
+          if (err) {
+            callback(err);
+          } else {
+            callback(null, results);
+          }
+        })
+      } else {
+        callback(null, existingUser);
+      }
+    }
+  });
+};
+
+const getUserById = (userId, callback) => {
+  connection.query('SELECT * FROM users WHERE users.id = ?', [userId], (err, results) => {
+    if (err) {
+      callback(err);
+    } else {
+      callback(null, results);
+    }
+  });
+};
+
+const getUserBySpotifyId = (spotify_id, callback) => {
+  connection.query('SELECT * FROM users WHERE users.spotify_id = ?', [spotify_id], (err, results) => {
+    if (err) {
+      callback(err);
+    } else {
+      callback(null, results);
+    }
+  });
+};
+
+const getUserByRoomId = (roomId, callback) => {
+  connection.query('SELECT * FROM users WHERE users.id = (SELECT user_id FROM rooms WHERE rooms.id = ?)', [roomId], (err, results) => {
+    if (err) {
+      callback(err);
+    } else {
+      callback(null, results);
+    }
+  });
+};
+
+const updateUserAccessTokenAndExpiresAt = (userSpotifyId, accessToken, tokenExpirationDate, callback) => {
+  connection.query('UPDATE users SET access_token = ?, token_expires_at = ? WHERE spotify_id = ?', [accessToken, tokenExpirationDate, userSpotifyId], (err, results) => {
+    if (err) {
+      callback(err);
+    } else {
+      callback(null, results);
+    }
+  })
+};
+
 module.exports = {
   showAllSongsInRoom,
   getSongsId,
   addSongToRoom,
   addRoom,
-  markSongAsPlayed,
+  markSongAsPlayedInRoom,
   markRoomAsInaccessible,
-  upvote,
-  downvote
+  upvoteSongInRoom,
+  downvoteSongInRoom,
+  addUser,
+  getUserById,
+  getUserBySpotifyId,
+  getUserByRoomId,
+  updateUserAccessTokenAndExpiresAt,
+  getSongInRoom,
+  showAllUnplayedSongsInRoom
 };
 
