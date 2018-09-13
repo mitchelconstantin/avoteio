@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import DropdownSongList from './DropdownSongList.jsx';
 import {data} from '../../../dummy_data.js';
+import axios from 'axios'; 
 
 
 class SearchBar extends Component {
@@ -27,6 +28,7 @@ class SearchBar extends Component {
         e.preventDefault()
         this.props.updateSongBank(this.state.input)
 
+        // SPOTIFY GET REQUEST
 
         // axios.get('/api/spotify/search'
         // ).then(function(response){
@@ -45,10 +47,7 @@ class SearchBar extends Component {
           //dummy process to populate dropdown Menu
           let spotifyResults = []
           for (let i = 0; i < 5; i++) {
-            let song = {
-              title: data.tracks.items[i].name,
-              artist: data.tracks.items[i].artists[0].name
-            }
+            let song = data.tracks.items[i];
             spotifyResults.push(song)
           }
           this.setState({
@@ -58,20 +57,22 @@ class SearchBar extends Component {
 
     }
 
-    selectSong (songObj) {
+    selectSong (e,songObj) {
         //post a song to the DB
-
-        // axios.post('/api/saveSong',{
-        //   roomID:this.props.roomID,
-        //   song: songObj
-        // }).then(function(response){
-
+        e.preventDefault()
+        console.log('HERE IS MY SONGOBJ',songObj)
+        axios.post('/api/saveSong',{
+          roomID:this.props.roomID,
+          songObj: songObj
+        }).then(function(response){
+          //ONCE IT IS SUCCESFULLY POSTED, GET ALL SONGS/REFRESH SONGBANK
           // this.props.getAllSongs()
-          
-          //   console.log(response)
-        // }).catch(function(error){
-        //   console.log(error)
-        // })
+
+            console.log('POST success!',response)
+
+        }).catch(function(error){
+          console.log('POST failed',error)
+        })
 
 
         //get all songs

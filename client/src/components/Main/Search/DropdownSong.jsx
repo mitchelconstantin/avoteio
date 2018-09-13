@@ -6,12 +6,15 @@ const DropdownSong = (props) => (
       <div>
         
           {console.log('Dropdown song props:',props)}
-          <div onClick={props.selectSong}>{props.title} by {props.artist}</div>
+          <button onClick={(e)=>props.selectSong(e, props.song)}>{props.song.name} by {props.song.artists[0].name}
+              
+          </button>
            
           
       </div>
   
-    
+    // //title: data.tracks.items[i].name,
+           //   artist: data.tracks.items[i].
 )
 
 
