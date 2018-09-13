@@ -2,13 +2,11 @@ require('dotenv').config();
 
 const express = require('express');
 const bodyParser = require('body-parser');
-<<<<<<< HEAD
-const routes = require('./routes.js');
-=======
-const apiRoutes = require('./routes/apiRoutes');
-const authRoutes = require('./routes/authRoutes');
-const db = require('../database/index');
->>>>>>> 843d5365795628f252b1c6e5277a6ed3554ca47b
+const path = require('path');
+
+const apiRoutes = require('./routes/api/apiRoutes');
+const authRoutes = require('./routes/spotify/authRoutes');
+// const db = require('../database/index');
 
 const app = express();
 
@@ -19,6 +17,10 @@ app.use(express.static(__dirname + '/../client/dist'));
 
 app.use('/api', apiRoutes);
 app.use('/auth', authRoutes);
+
+app.get('/*', (req, res) => {
+  res.sendFile(path.join(__dirname, '../client/dist/index.html'));
+});
 
 const port = process.env.PORT || 3000;
 
