@@ -6,7 +6,6 @@ const path = require('path');
 
 const apiRoutes = require('./routes/api/apiRoutes');
 const authRoutes = require('./routes/spotify/authRoutes');
-// const db = require('../database/index');
 
 const db = require('../database/index');
 const app = express();
@@ -18,6 +17,10 @@ app.use(express.static(__dirname + '/../client/dist'));
 
 app.use('/api', apiRoutes);
 app.use('/auth', authRoutes);
+
+app.get('/rooms/:roomId', (req, res) => {
+  console.log(req.params);
+});
 
 app.get('/*', (req, res) => {
   res.sendFile(path.join(__dirname, '../client/dist/index.html'));
