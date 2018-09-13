@@ -2,17 +2,11 @@ require('dotenv').config();
 
 const express = require('express');
 const bodyParser = require('body-parser');
-<<<<<<< HEAD
-const apiRoutes = require('./routes/apiRoutes');
-const authRoutes = require('./routes/authRoutes');
-const db = require('../database/index');
-=======
 const path = require('path');
 
 const apiRoutes = require('./routes/api/apiRoutes');
 const authRoutes = require('./routes/spotify/authRoutes');
 // const db = require('../database/index');
->>>>>>> 87059adce7d1199864bab42a4c0fc07b84775ca9
 
 const app = express();
 
