@@ -35,18 +35,17 @@ class CreateRoom extends Component {
 //     console.log(error);
 //   });
 
-    this.props.changeCurrentPage("Main")
+    this.props.changeView(8008)
   }
 
   render() {
     return (
      <div>
-         {/* {console.log('here are search props',this.props)} */}
          <h1>Create A Room</h1>
          <form action=""  >
              <input type="text" value={this.state.input} onChange={this.handleInputChange} />
              <button onClick={(e)=>this.handleClick(e)}>button</button>
-
+             <a href="/auth/login">Login </a>
          </form>
      </div>
     );
