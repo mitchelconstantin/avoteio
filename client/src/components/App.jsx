@@ -7,17 +7,17 @@ class App extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      currentPage: 'CreateRoom',
+      userID: null,
       roomID:1
     };
 
-    this.changeCurrentPage = this.changeCurrentPage.bind(this)
+    this.changeViewFromLoginToCreate = this.changeViewFromLoginToCreate.bind(this)
     this.setRoomID = this.setRoomID.bind(this)
   }
 
-  changeCurrentPage (newPage) {
+  changeViewFromLoginToCreate (userID) {
     this.setState({
-      currentPage: newPage
+      userID: userID
     });
   }
 
@@ -28,24 +28,24 @@ class App extends Component {
   }
 
   render() {
-    // let component;
-    // if(this.state.currentPage === 'Login') {
-    //   // component = <Login />
-    // } else if (this.state.currentPage === 'CreateRoom') {
-    //   component = <CreateRoom changeCurrentPage={this.changeCurrentPage} setRoomID={this.setRoomID}/>
-    // } else if (this.state.currentPage === 'Main') {
-    //   component = <Main />
-    // }
-    // // console.log(data.tracks.items);
+    let component;
+     if (this.state.userID === null) {
+      component = <CreateRoom changeView={this.changeViewFromLoginToCreate} setRoomID={this.setRoomID}/>
+    } else {
+      // set to login component = <Login />
+    }
+    // console.log(data.tracks.items);
+    console.log(component)
     return (
       <div>
+        {console.log(this.state)}
         <Route 
           exact path='/'
-          component={CreateRoom}
+          render={(props) => <CreateRoom  changeView={this.changeViewFromLoginToCreate} setRoomID={this.setRoomID}/>}
         />
         <Route 
           path='/rooms'
-          component={Main}
+          component= {Main}
         />
       </div>
     );
