@@ -16,7 +16,6 @@ class CreateRoom extends Component {
   componentDidMount() {
     axios.get('/api/isLoggedIn')
     .then(({ data }) => {
-      console.log('user id is: ',data);
       this.props.setUserID(data);
     })
     .catch(error => {
@@ -38,7 +37,6 @@ class CreateRoom extends Component {
       roomName: this.state.input
     })
     .then(({data}) => {
-      console.log(data);
       this.props.setRoomID(data);
       this.props.history.push(`/rooms/${data}`);
     })

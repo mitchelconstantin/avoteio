@@ -19,8 +19,8 @@ router.post('/createRoom', (req, res) => {
 });
 
 router.get('/getAllSongs', (req, res) => {
-  let roomID = req.query.roomID  
-  db.showAllSongsInRoom(roomID,function(err,data){
+  let {roomID} = req.query;  
+  db.showAllUnplayedSongsInRoom(roomID, (err,data) => {
     if (err) {
       console.log('NO DATA 4 U',err);
       res.end();
@@ -32,11 +32,10 @@ router.get('/getAllSongs', (req, res) => {
 });
 
 router.post('/saveSong', (req,res) => {
-  console.log('post request success!',req.body)
   let roomID = req.body.roomID;
   let songObj = req.body.songObj;
   //ADD SONG TO CURRENT ROOM 
-  db.addSongToRoom(songObj,roomID, function(err,data){
+  db.addSongToRoom(songObj, roomID, function(err,data){
     if (err) {
       console.log('NOPE insert song',err);
       res.end();
