@@ -7,13 +7,13 @@ router.get('/isLoggedIn', (req, res) => {
 });
 
 router.get('/rooms/:roomId', (req, res) => {
-  req.session.roomId = req.params.roomId;
-  db.showAllUnplayedSongsInRoom(req.session.roomId, (err,data) => {
+  db.showAllUnplayedSongsInRoom(req.params.roomId, (err,data) => {
     if (err) {
       console.log('NO DATA 4 U',err);
       res.sendStatus(500);
     } else {
       console.log('data reterieval success!,',data);
+      req.session.roomId = req.params.roomId;  
       res.json(data);
     }
   });
@@ -34,14 +34,11 @@ router.post('/createRoom', (req, res) => {
 
 router.get('/getAllSongs', (req, res) => {
   let roomId = req.session.roomId;
-  console.log('getAllSongs roomID=',roomId)
-  console.log('HER EIS REQ.session',req.session)
   db.showAllUnplayedSongsInRoom(roomId, (err,data) => {
     if (err) {
       console.log('NO DATA 4 U',err);
       res.sendStatus(500);
     } else {
-      console.log('data reterieval success!,',data);
       res.json(data);
     }
   });
@@ -56,7 +53,6 @@ router.post('/saveSong', (req,res) => {
       console.log('NOPE insert song',err);
       res.sendStatus(500);
     } else {
-      console.log('data insertion success!,',data);
       res.end();
     }
   });
