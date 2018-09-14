@@ -6,6 +6,19 @@ router.get('/isLoggedIn', (req, res) => {
   res.json(req.session.spotifyId || null);
 });
 
+router.get('/rooms/:roomId', (req, res) => {
+  req.session.roomId = req.params.roomId;
+  db.showAllUnplayedSongsInRoom(req.session.roomId, (err,data) => {
+    if (err) {
+      console.log('NO DATA 4 U',err);
+      res.sendStatus(500);
+    } else {
+      console.log('data reterieval success!,',data);
+      res.json(data);
+    }
+  });
+});
+
 router.post('/createRoom', (req, res) => {
   const {roomName} = req.body;
   db.addRoom(roomName, req.session.spotifyId, (err, room) => {

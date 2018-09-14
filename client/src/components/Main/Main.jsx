@@ -11,47 +11,40 @@ class Main extends Component {
     super(props);
     this.state = {
       songBank: [],
-      roomID: this.props.match.params.roomId
+      roomID: null
     };
     this.updateSongBank = this.updateSongBank.bind(this);
     this.getAllSongs = this.getAllSongs.bind(this);
   }
   
   componentDidMount() {
-    // console.log(this.state.roomID);
-    // axios.get('/api/getAllSongs', {
-    //   params: {
-    //     roomID: this.state.roomID
-    //   }
-    // }).then((response) => {
-    //   console.log(response);
-    //   // this.setState({
-    //   //   songBank: response
-    //   // })
-    //   // console.log('getAllSongs Success!',response)
-    // }).catch((error) => {
-    //   console.log(error);
-    // });
+    const {roomId} = this.props.match.params;
+    axios.get(`/api/rooms/${roomId}`)
+    .then(response => {
+      this.setState({
+        roomID: roomId
+      });
+      this.getAllSongs();
+    })
+    .catch(err => {
+      console.log(err);
+    });
   }
 
   getAllSongs() {
-    // e.preventDefault()
-    // make a get request to server
-    console.log('We made it to getAllSongs in MAIN',this.state)
-    axios.get('/api/getAllSongs',{
+    axios.get('/api/getAllSongs', {
       params: {
-       roomID:this.state.roomID
+       roomID: this.state.roomID
       }
-     }).then(({data}) => {
-      console.log('getAllSongs Success!',data)
+    })
+    .then(({data}) => {
       this.setState({
         songBank: data
-      })
-     }).catch(function(error){
-       console.log(error)
-     })
-  
-    console.log('I am getting all Songs!')
+      });
+    })
+    .catch((error) => {
+      console.log(error)
+    })
   }
 
   updateSongBank(input) {

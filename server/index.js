@@ -36,13 +36,8 @@ app.use('/api', apiRoutes);
 app.use('/auth', authRoutes);
 app.use('/spotify', spotifyApiRoutes);
 
-app.get('/rooms/:roomId', (req, res) => {
-  req.session.roomId = req.params.roomId;
-  console.log(req.session);
-  res.send();
-});
-
 app.get('/*', (req, res) => {
+  console.log(req.url);
   res.sendFile(path.join(__dirname, '../client/dist/index.html'));
 });
 
