@@ -49,7 +49,7 @@ const getSongsId = (songObj, callback) => {
 };
 
 const addSongToRoom = (songObj, roomId, callback) => {
-  connection.query('SELECT * FROM songs WHERE songs.spotify_id = ?', [songObj], (err, results) => {
+  connection.query('SELECT * FROM songs WHERE songs.spotify_id = ?', [songObj.id], (err, results) => {
     if (err) {
       callback(err);
     } else {

@@ -30,19 +30,20 @@ class CreateRoom extends Component {
   }
 
   handleClick(e) {
-    //update the main songBank from Database
-    e.preventDefault()
-
-    axios.post('/api/createRoom', {
-      roomName: this.state.input
-    })
-    .then(({data}) => {
-      this.props.setRoomID(data);
-      this.props.history.push(`/rooms/${data}`);
-    })
-    .catch(error => {
-      console.log(error);
-    });
+    if (this.state.input) {
+      e.preventDefault()
+  
+      axios.post('/api/createRoom', {
+        roomName: this.state.input
+      })
+      .then(({data}) => {
+        this.props.setRoomID(data);
+        this.props.history.push(`/rooms/${data}`);
+      })
+      .catch(error => {
+        console.log(error);
+      });
+    }
   }
 
   render() {
