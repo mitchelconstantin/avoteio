@@ -6,11 +6,14 @@ class CreateRoom extends Component {
   constructor(props) {
     super(props);
     this.state = {
-        input: ''
+      input: '',
+      roomCode: ''
     };
 
     this.handleInputChange = this.handleInputChange.bind(this);
     this.handleClick = this.handleClick.bind(this);
+    this.handleInputChange = this.handleInputChange.bind(this);
+    this.handleRoomCodeChange = this.handleRoomCodeChange.bind(this);
   }
 
   componentDidMount() {
@@ -23,20 +26,26 @@ class CreateRoom extends Component {
     });
   }
 
-  handleInputChange (e) {
+  handleInputChange(e) {
     this.setState({
-        input:e.target.value
+      input: e.target.value
+    })
+  }
+
+  handleRoomCodeChange(e) {
+    this.setState({
+      roomCode: e.target.value
     })
   }
 
   handleClick(e) {
     if (this.state.input) {
       e.preventDefault()
-  
+
       axios.post('/api/createRoom', {
         roomName: this.state.input
       })
-      .then(({data}) => {
+      .then(({ data }) => {
         this.props.setRoomID(data);
         this.props.history.push(`/rooms/${data}`);
       })
@@ -46,6 +55,12 @@ class CreateRoom extends Component {
     }
   }
 
+  joinRoom() {
+    const {roomCode} = this.state;
+    this.props.setRoomID(roomCode);
+    this.props.history.push(`/rooms/${roomCode}`);
+  }
+
   render() {
     let component;
     if (this.props.userID) {
@@ -53,7 +68,7 @@ class CreateRoom extends Component {
         <div>
           <h2>Create A Room</h2>
           <input type="text" value={this.state.input} onChange={this.handleInputChange} />
-          <button onClick={(e)=>this.handleClick(e)}>button</button>
+          <button onClick={(e) => this.handleClick(e)}>button</button>
         </div>
       )
     } else {
@@ -61,14 +76,14 @@ class CreateRoom extends Component {
     }
 
     return (
-     <div>
+      <div>
         {component}
         <div>
           <h3>Or join an existing room</h3>
-          <input type="text" placeholder="Enter a room code..."/>
-          <button>Join Room</button>
+          <input type="text" placeholder="Enter a room code..." value={this.state.roomCode} onChange={this.handleRoomCodeChange} />
+          <button onClick={() => this.joinRoom()}>Join Room</button>
         </div>
-     </div>
+      </div>
     );
   }
 }
