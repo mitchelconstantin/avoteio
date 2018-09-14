@@ -42,7 +42,7 @@ class App extends Component {
           )}
         />
         <Route 
-          path='/rooms/:roomID'
+          path='/rooms/:roomId'
           component= {Main}
         />
       </div>

@@ -11,13 +11,14 @@ class Main extends Component {
     super(props);
     this.state = {
       songBank: [],
-      roomID: 1
+      roomID: this.props.match.params.roomId
     };
     this.updateSongBank = this.updateSongBank.bind(this);
     this.getAllSongs = this.getAllSongs.bind(this);
   }
   
-  componentDidMount () {
+  componentDidMount() {
+    console.log(this.state.roomID);
     axios.get('/api/getAllSongs', {
       params: {
         roomID: this.state.roomID
@@ -27,13 +28,13 @@ class Main extends Component {
       // this.setState({
       //   songBank: response
       // })
-      console.log('getAllSongs Success!',response)
+      // console.log('getAllSongs Success!',response)
     }).catch((error) => {
       console.log(error);
     });
   }
 
-  getAllSongs () {
+  getAllSongs() {
     // e.preventDefault()
     // make a get request to server
 
@@ -53,7 +54,7 @@ class Main extends Component {
     console.log('I am getting all Songs!')
   }
 
-  updateSongBank (input) {
+  updateSongBank(input) {
     //example push request
     this.state.songBank.push(input)
 

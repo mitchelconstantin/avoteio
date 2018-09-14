@@ -2,23 +2,6 @@ const passport = require('passport');
 const SpotifyStrategy = require('passport-spotify').Strategy;
 const db = require('../../../database/index');
 
-const scope = [
-  'user-read-email',
-  'streaming',
-  'user-modify-playback-state',
-  'user-read-currently-playing',
-  'user-read-playback-state',
-  'user-library-read',
-  'playlist-read-private',
-  'user-library-modify',
-  'playlist-modify-public',
-  'user-read-recently-played',
-  'user-read-private',
-  'playlist-modify-private',
-  'user-top-read',
-  'user-read-birthdate',
-];
-
 passport.serializeUser((user, done) => {
   done(null, user);
 });

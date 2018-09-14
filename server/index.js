@@ -6,6 +6,7 @@ const path = require('path');
 
 const apiRoutes = require('./routes/api/apiRoutes');
 const authRoutes = require('./routes/spotify/authRoutes');
+const spotifyApiRoutes = require('./routes/spotify/apiRoutes');
 
 const passportSetup = require('./routes/config/passport-setup');
 const passport = require('passport');
@@ -33,9 +34,11 @@ app.use(express.static(__dirname + '/../client/dist'));
 
 app.use('/api', apiRoutes);
 app.use('/auth', authRoutes);
+app.use('/spotify', spotifyApiRoutes);
 
 app.get('/rooms/:roomId', (req, res) => {
-  // console.log(req.params);
+  req.session.roomId = req.params.roomId;
+  console.log(req.session);
   res.send();
 });
 
