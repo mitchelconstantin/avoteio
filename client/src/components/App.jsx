@@ -8,14 +8,14 @@ class App extends Component {
     super(props);
     this.state = {
       userID: null,
-      roomID:1
+      roomID: null
     };
 
-    this.changeViewFromLoginToCreate = this.changeViewFromLoginToCreate.bind(this)
+    this.setUserID = this.setUserID.bind(this)
     this.setRoomID = this.setRoomID.bind(this)
   }
 
-  changeViewFromLoginToCreate (userID) {
+  setUserID (userID) {
     this.setState({
       userID: userID
     });
@@ -28,23 +28,21 @@ class App extends Component {
   }
 
   render() {
-    let component;
-     if (this.state.userID === null) {
-      component = <CreateRoom changeView={this.changeViewFromLoginToCreate} setRoomID={this.setRoomID}/>
-    } else {
-      // set to login component = <Login />
-    }
-    // console.log(data.tracks.items);
-    console.log(component)
     return (
       <div>
-        {console.log(this.state)}
         <Route 
           exact path='/'
-          render={(props) => <CreateRoom  changeView={this.changeViewFromLoginToCreate} setRoomID={this.setRoomID}/>}
+          render={(props) => (
+            <CreateRoom 
+              setUserID={this.setUserID}
+              setRoomID={this.setRoomID}
+              roomID={this.state.roomID}
+              userID={this.state.userID}
+            />
+          )}
         />
         <Route 
-          path='/rooms'
+          path='/rooms/:roomID'
           component= {Main}
         />
       </div>

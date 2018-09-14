@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
-
+import { Link, Route, Redirect, withRouter } from 'react-router-dom';
+import axios from 'axios';
 
 class CreateRoom extends Component {
   constructor(props) {
@@ -12,6 +13,15 @@ class CreateRoom extends Component {
     this.handleClick = this.handleClick.bind(this);
   }
 
+  componentDidMount() {
+    axios.get('/api/isLoggedIn')
+    .then(({ data }) => {
+      this.props.setUserID(data);
+    })
+    .catch(error => {
+      console.log(error);
+    });
+  }
 
   handleInputChange (e) {
     this.setState({
@@ -22,34 +32,44 @@ class CreateRoom extends Component {
   handleClick(e) {
     //update the main songBank from Database
     e.preventDefault()
-    this.props.setRoomID(2)
 
-    //axios.post('/createRoom', {
-//    roomName:''
-//   })
-//   .then(function (response) {
-    // this.props.setRoomID(response)
-//     console.log(response);
-//   })
-//   .catch(function (error) {
-//     console.log(error);
-//   });
-
-    this.props.changeView(8008)
+    axios.post('/api/createRoom', {
+      roomName: this.state.input
+    })
+    .then(({data}) => {
+      this.props.setRoomID(data);
+      this.props.history.push(`/rooms/${data}`);
+    })
+    .catch(error => {
+      console.log(error);
+    });
   }
 
   render() {
+    let component;
+    if (this.props.userID) {
+      component = (
+        <div>
+          <h2>Create A Room</h2>
+          <input type="text" value={this.state.input} onChange={this.handleInputChange} />
+          <button onClick={(e)=>this.handleClick(e)}>button</button>
+        </div>
+      )
+    } else {
+      component = <a href="/auth/login">Login With Spotify</a>
+    }
+
     return (
      <div>
-         <h1>Create A Room</h1>
-         <form action=""  >
-             <input type="text" value={this.state.input} onChange={this.handleInputChange} />
-             <button onClick={(e)=>this.handleClick(e)}>button</button>
-             <a href="/auth/login">Login </a>
-         </form>
+        {component}
+        <div>
+          <h3>Or join an existing room</h3>
+          <input type="text" placeholder="Enter a room code..."/>
+          <button>Join Room</button>
+        </div>
      </div>
     );
   }
 }
 
-export default CreateRoom;
+export default withRouter(CreateRoom);

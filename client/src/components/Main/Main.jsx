@@ -16,7 +16,22 @@ class Main extends Component {
     this.updateSongBank = this.updateSongBank.bind(this);
     this.getAllSongs = this.getAllSongs.bind(this);
   }
-
+  
+  componentDidMount () {
+    axios.get('/api/getAllSongs', {
+      params: {
+        roomID: this.state.roomID
+      }
+    }).then((response) => {
+      console.log(response);
+      // this.setState({
+      //   songBank: response
+      // })
+      console.log('getAllSongs Success!',response)
+    }).catch((error) => {
+      console.log(error);
+    });
+  }
 
   getAllSongs () {
     // e.preventDefault()
@@ -48,40 +63,7 @@ class Main extends Component {
     
   }
 
-  componentDidMount () {
-    //example get request
-    let songBank = []
-    for (let i = 0; i < 5; i++) {
-      let song = {
-        title: data.tracks.items[i].name,
-        artist: data.tracks.items[i].artists[0].name
-      }
-      songBank.push(song)
-    }
-    this.setState({
-      songBank:songBank
-    })
-
-     axios.get('/api/getAllSongs',{
-        params: {
-         roomID:this.state.roomID
-        }
-       }).then(function(response){
-          // this.setState({
-          //   songBank: response
-    // })
-         console.log('getAllSongs Success!',response)
-       }).catch(function(error){
-         console.log(error)
-       })
-    
-  } 
-
-  
-
   render() {
-    
-    // console.log(data.tracks.items);
     return (
       <div>
         <h1>Howdy, World!</h1>
