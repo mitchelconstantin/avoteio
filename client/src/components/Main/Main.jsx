@@ -14,6 +14,7 @@ class Main extends Component {
       roomID: null,
       playNextSong: false
     };
+    this.checkSongStatus = null;
     this.getAllSongs = this.getAllSongs.bind(this);
     this.getSongStatus = this.getSongStatus.bind(this);
     this.playNextSong = this.playNextSong.bind(this);
@@ -54,7 +55,7 @@ class Main extends Component {
   }
 
   getSongStatus() {
-    let checkSongStatus = setInterval(()=> {
+    this.checkSongStatus = setInterval(()=> {
       axios.get('/spotify/currentSong')
       .then(({data:{playNextSong}}) => {
         if (playNextSong) {
@@ -77,6 +78,10 @@ class Main extends Component {
       // this.getSongStatus();
       console.log('POST failed', error);
     });
+  }
+
+  componentWillUnmount() {
+    clearInterval(this.checkSongStatus);
   }
 
   render() {
