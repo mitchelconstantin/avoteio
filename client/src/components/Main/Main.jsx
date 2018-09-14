@@ -11,10 +11,12 @@ class Main extends Component {
     super(props);
     this.state = {
       songBank: [],
-      roomID: null
+      roomID: null,
+      playNextSong: false
     };
-    this.updateSongBank = this.updateSongBank.bind(this);
     this.getAllSongs = this.getAllSongs.bind(this);
+    this.getSongStatus = this.getSongStatus.bind(this);
+    this.playNextSong = this.playNextSong.bind(this);
   }
   
   componentDidMount() {
@@ -26,9 +28,13 @@ class Main extends Component {
       });
       this.getAllSongs();
     })
+    .then(()=>{
+      this.getSongStatus();
+    })
     .catch(err => {
       console.log(err);
     });
+    
   }
 
   getAllSongs() {
@@ -39,26 +45,42 @@ class Main extends Component {
     })
     .then(({data}) => {
       this.setState({
-        songBank: data
+        songBank: data.reverse()
       });
     })
     .catch((error) => {
-      console.log(error)
+      console.log(error);
     })
   }
 
-  updateSongBank(input) {
-    //example push request
-    this.state.songBank.push(input)
+  getSongStatus() {
+    let checkSongStatus = setInterval(()=> {
+      axios.get('/spotify/currentSong')
+      .then(({data:{playNextSong}}) => {
+        if (playNextSong) {
+          // this.setState({
+          //   playNextSong: true
+          // })
+          this.playNextSong();
+        }
+      })
+      .catch((error)=> {
+        console.log(error);
+      })
+    }, 1000);
+  }
 
-    // this.setState({
-    //   songBank: this.state.songBank
-    // })
-
+  playNextSong() {
+    const songId = this.state.songBank[0].spotify_id;
+    axios.post(`/spotify/playSong/${songId}`)
+    .catch(function (error) {
+      // this.getSongStatus();
+      console.log('POST failed', error);
+    });
   }
 
   render() {
-    return (
+    return (  
       <div>
         <h1>Howdy, World!</h1>
         <SongList songBank={this.state.songBank} dropdownSongs={this.dropdownSongs}/>
