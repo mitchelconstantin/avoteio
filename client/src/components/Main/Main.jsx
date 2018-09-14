@@ -18,38 +18,38 @@ class Main extends Component {
   }
   
   componentDidMount() {
-    console.log(this.state.roomID);
-    axios.get('/api/getAllSongs', {
-      params: {
-        roomID: this.state.roomID
-      }
-    }).then((response) => {
-      console.log(response);
-      // this.setState({
-      //   songBank: response
-      // })
-      // console.log('getAllSongs Success!',response)
-    }).catch((error) => {
-      console.log(error);
-    });
+    // console.log(this.state.roomID);
+    // axios.get('/api/getAllSongs', {
+    //   params: {
+    //     roomID: this.state.roomID
+    //   }
+    // }).then((response) => {
+    //   console.log(response);
+    //   // this.setState({
+    //   //   songBank: response
+    //   // })
+    //   // console.log('getAllSongs Success!',response)
+    // }).catch((error) => {
+    //   console.log(error);
+    // });
   }
 
   getAllSongs() {
     // e.preventDefault()
     // make a get request to server
-
-  //   axios.get('/api/rooms/getAllSongs',{
-  //     params: {
-  //      roomID:this.state.roomID
-  //     }
-  //    }).then(function(response){
-  //       // this.setState({
-  //       //   songBank: response
-  // // })
-  //      console.log('getAllSongs Success!',response)
-  //    }).catch(function(error){
-  //      console.log(error)
-  //    })
+    console.log('We made it to getAllSongs in MAIN',this.state)
+    axios.get('/api/getAllSongs',{
+      params: {
+       roomID:this.state.roomID
+      }
+     }).then(({data}) => {
+      console.log('getAllSongs Success!',data)
+      this.setState({
+        songBank: data
+      })
+     }).catch(function(error){
+       console.log(error)
+     })
   
     console.log('I am getting all Songs!')
   }
@@ -61,14 +61,14 @@ class Main extends Component {
     // this.setState({
     //   songBank: this.state.songBank
     // })
-    
+
   }
 
   render() {
     return (
       <div>
         <h1>Howdy, World!</h1>
-        <SongList songBank= {this.state.songBank} dropdownSongs={this.dropdownSongs}/>
+        <SongList songBank={this.state.songBank} dropdownSongs={this.dropdownSongs}/>
         <SearchBar updateSongBank={this.updateSongBank} roomID={this.state.roomID} getAllSongs={this.getAllSongs}/>
       </div>
     )

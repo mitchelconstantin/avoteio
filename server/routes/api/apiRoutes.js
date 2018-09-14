@@ -13,17 +13,20 @@ router.post('/createRoom', (req, res) => {
       console.log(err);
       res.sendStatus(500);
     } else {
+      req.session.roomId = room.insertId;
       res.json(room.insertId);
     }
   });
 });
 
 router.get('/getAllSongs', (req, res) => {
-  let {roomID} = req.query;  
-  db.showAllUnplayedSongsInRoom(roomID, (err,data) => {
+  let roomId = req.session.roomId;
+  console.log('getAllSongs roomID=',roomId)
+  console.log('HER EIS REQ.session',req.session)
+  db.showAllUnplayedSongsInRoom(roomId, (err,data) => {
     if (err) {
       console.log('NO DATA 4 U',err);
-      res.end();
+      res.sendStatus(500);
     } else {
       console.log('data reterieval success!,',data);
       res.json(data);
@@ -32,13 +35,13 @@ router.get('/getAllSongs', (req, res) => {
 });
 
 router.post('/saveSong', (req,res) => {
-  let roomID = req.body.roomID;
+  let roomId = req.session.roomId;
   let songObj = req.body.songObj;
   //ADD SONG TO CURRENT ROOM 
-  db.addSongToRoom(songObj, roomID, function(err,data){
+  db.addSongToRoom(songObj, roomId, function(err,data){
     if (err) {
       console.log('NOPE insert song',err);
-      res.end();
+      res.sendStatus(500);
     } else {
       console.log('data insertion success!,',data);
       res.end();

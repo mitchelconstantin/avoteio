@@ -21,7 +21,7 @@ const scope = [
 // Auth logout
 router.get('/logout', (req, res) => {
   req.logout();
-  req.session.userId = undefined;
+  req.session.userId = null;
   res.redirect('/login');
 });
 
