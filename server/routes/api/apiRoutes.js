@@ -6,7 +6,7 @@ router.get('/isLoggedIn', (req, res) => {
   res.json(req.session.spotifyId || null);
 });
 
-router.get('/rooms/:roomId', (req, res) => {
+router.post('/rooms/:roomId', (req, res) => {
   db.showAllUnplayedSongsInRoom(req.params.roomId, (err,data) => {
     if (err) {
       console.log('NO DATA 4 U',err);
@@ -54,6 +54,19 @@ router.post('/saveSong', (req,res) => {
       res.sendStatus(500);
     } else {
       res.end();
+    }
+  });
+});
+
+router.post('/markSongPlayed', (req,res) => {
+  const roomId = req.session.roomId;
+  const {songObj: {spotify_id}} = req.body;
+  db.markSongAsPlayedInRoom({id: spotify_id}, roomId, (err, result) => {
+    if (err) {
+      console.log('error updating song played status');
+      res.sendStatus(500);
+    } else {
+      res.json(result);
     }
   });
 });
