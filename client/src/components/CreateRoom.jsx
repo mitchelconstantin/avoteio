@@ -65,23 +65,25 @@ class CreateRoom extends Component {
     let component;
     if (this.props.userID) {
       component = (
-        <div>
+        <div className="create-room">
           <h2>Create A Room</h2>
           <input type="text" value={this.state.input} onChange={this.handleInputChange} />
           <button onClick={(e) => this.handleClick(e)}>button</button>
         </div>
       )
     } else {
-      component = <a href="/auth/login">Login With Spotify</a>
+      component = <a className="spotify-login" href="/auth/login">+ Login With Spotify</a>
     }
 
     return (
-      <div>
+      <div className="main-login">
         {component}
-        <div>
+        <div className="join-room">
           <h3>Or join an existing room</h3>
-          <input type="text" placeholder="Enter a room code..." value={this.state.roomCode} onChange={this.handleRoomCodeChange} />
-          <button onClick={() => this.joinRoom()}>Join Room</button>
+          <div className="join-form">
+            <input className="join-input" type="text" placeholder="Enter a room code..." value={this.state.roomCode} onChange={this.handleRoomCodeChange} />
+            <button className="join-btn" onClick={() => this.joinRoom()}>Join Room</button>
+          </div>
         </div>
       </div>
     );

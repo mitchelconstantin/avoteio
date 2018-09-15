@@ -120,7 +120,7 @@ router.get('/currentSong', async (req, res) => {
 
   try {
     const {data} = await axios(options);
-    if (typeof data === 'object' && data.progress_ms + 1200 >= data.item.duration_ms) {
+    if (typeof data === 'object' && data.progress_ms + 3000 >= data.item.duration_ms) {
       res.json({ playNextSong: true });
     } else {
       res.json({ playNextSong: false });
