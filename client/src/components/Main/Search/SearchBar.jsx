@@ -54,21 +54,16 @@ class SearchBar extends Component {
     }).catch(function (error) {
       console.log('POST failed', error)
     })
-
-
-    //get all songs
-
   }
 
   render() {
     return (
       <div>
-        <form action=""  >
-          <input type="text" value={this.state.input} onChange={this.handleInputChange} />
-          <button onClick={(e) => this.handleClick(e)}>button</button>
-
-          <DropdownSongList spotifyResults={this.state.spotifyResults} selectSong={this.selectSong} />
-        </form>
+        <div className="search-bar">
+          <input className="search-input" type="text" value={this.state.input} onChange={this.handleInputChange} />
+          <button className="search-submit" onClick={(e) => this.handleClick(e)}>Search</button>
+        </div>
+        <DropdownSongList spotifyResults={this.state.spotifyResults} selectSong={this.selectSong} />
       </div>
     );
   }

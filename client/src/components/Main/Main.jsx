@@ -1,8 +1,7 @@
 import React, { Component } from 'react';
-import {data} from '../../dummy_data.js';
 import SearchBar from './Search/SearchBar.jsx';
 import SongList from './SongList.jsx';
-import Song from './Song.jsx'
+// import Song from './Song.jsx';
 import axios from 'axios'; 
 
 
@@ -22,20 +21,19 @@ class Main extends Component {
   
   componentDidMount() {
     const {roomId} = this.props.match.params;
-    axios.get(`/api/rooms/${roomId}`)
-    .then(response => {
+    axios.post(`/api/rooms/${roomId}`)
+    .then(() => {
       this.setState({
         roomID: roomId
       });
       this.getAllSongs();
     })
-    .then(()=>{
+    .then(() => {
       this.getSongStatus();
     })
     .catch(err => {
       console.log(err);
     });
-    
   }
 
   getAllSongs() {
@@ -55,29 +53,43 @@ class Main extends Component {
   }
 
   getSongStatus() {
-    this.checkSongStatus = setInterval(()=> {
-      axios.get('/spotify/currentSong')
-      .then(({data:{playNextSong}}) => {
-        if (playNextSong) {
-          // this.setState({
-          //   playNextSong: true
-          // })
-          this.playNextSong();
+    this.checkSongStatus = setTimeout(async () => {
+      const {data:{playNextSong}} = await axios.get('/spotify/currentSong');
+      if (playNextSong) {
+        try {
+          clearInterval(this.checkSongStatus);
+          await this.playNextSong();
+        } catch(err) {
+          console.log('there was an error playing the song', err);
         }
-      })
-      .catch((error)=> {
-        console.log(error);
-      })
+      } else {
+        this.getSongStatus();
+      }
+      // axios.get('/spotify/currentSong')
+      // .then(async ({data:{playNextSong}}) => {
+      //   if (playNextSong) {
+      //     // this.setState({
+      //     //   playNextSong: true
+      //     // })
+      //     await this.playNextSong();
+      //   }
+      // })
+      // .catch((error)=> {
+      //   console.log(error);
+      // })
     }, 1000);
   }
 
-  playNextSong() {
+  async playNextSong() {
     const songId = this.state.songBank[0].spotify_id;
-    axios.post(`/spotify/playSong/${songId}`)
-    .catch(function (error) {
-      // this.getSongStatus();
-      console.log('POST failed', error);
+    const playSong = axios.post(`/spotify/playSong/${songId}`);
+    const updatePlayedStatus = axios.post('/api/markSongPlayed', {
+      songObj: this.state.songBank[0]
     });
+
+    await Promise.all([playSong, updatePlayedStatus])
+    
+    this.getAllSongs();
   }
 
   componentWillUnmount() {
@@ -86,10 +98,12 @@ class Main extends Component {
 
   render() {
     return (  
-      <div>
+      <div className="main">
         <h1>Howdy, World!</h1>
-        <SongList songBank={this.state.songBank} dropdownSongs={this.dropdownSongs}/>
-        <SearchBar updateSongBank={this.updateSongBank} roomID={this.state.roomID} getAllSongs={this.getAllSongs}/>
+        <div className="center">
+          <SongList songBank={this.state.songBank} dropdownSongs={this.dropdownSongs}/>
+          <SearchBar updateSongBank={this.updateSongBank} roomID={this.state.roomID} getAllSongs={this.getAllSongs}/>
+        </div>
       </div>
     )
   }

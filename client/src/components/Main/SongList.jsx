@@ -2,9 +2,9 @@ import React from 'react';
 import Song from './Song.jsx';
 
 const SongList = (props) => (
-  <div>
+  <div className="song-list">
     {/* {console.log('HERE ARE MY SONG LIST PROPS: ', props)} */}
-    {props.songBank.map((song, index) => <Song title={song.title} artist={song.artist} key={index} />)}
+    {props.songBank.map(song => <Song song={song} key={song.id} />)}
   </div>
 );
 
