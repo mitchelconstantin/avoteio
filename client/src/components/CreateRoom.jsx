@@ -39,9 +39,9 @@ class CreateRoom extends Component {
   }
 
   handleClick(e) {
+    e.preventDefault()
+    
     if (this.state.input) {
-      e.preventDefault()
-
       axios.post('/api/createRoom', {
         roomName: this.state.input
       })

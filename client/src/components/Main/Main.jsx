@@ -33,15 +33,6 @@ class Main extends Component {
     })
     .catch(err => {
       console.log(err);
-    })
-    .then(() => {
-      return axios.get('/spotify/devices')
-    })
-    .then(response => {
-      console.log(response);
-    })
-    .catch(err => {
-      console.log(err);
     });
   }
 

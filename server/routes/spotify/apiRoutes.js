@@ -4,159 +4,131 @@ const btoa = require('btoa');
 const db = require('../../../database/index')
 const axios = require('axios');
 
-router.use((req, res, next) => {
-  const encoded = btoa(`${process.env.SPOTIFY_CLIENT_ID}:${process.env.SPOTIFY_CLIENT_SECRET}`);
-  db.getUserByRoomId(req.session.roomId, async (err, data) => {
+const getUserByRoomId = (req, res, next) => {
+  db.getUserByRoomId(req.session.roomId, (err, [user]) => {
     if (err) {
-      console.log(`Couldn't retrieve user`, err);
+      console.log(err);
       res.sendStatus(500);
     } else {
-      const [user] = data;
-      const needsRefresh = new Date() >= new Date(user.token_expires_at);
-      
-      if (needsRefresh) {
-        const refreshToken = user.refresh_token;
-        const dataString = `?grant_type=refresh_token&refresh_token=${refreshToken}`;
-        const options = {
-          method: 'POST',
-          url: `https://accounts.spotify.com/api/token${dataString}`,
-          headers: {
-            'Accept': 'application/json',
-            'Content-Type': 'application/x-www-form-urlencoded',
-            'Authorization': `Basic ${encoded}`,
-          },
-        };
-        const {data: {access_token}} = await axios(options);
-        const token_expires_at = new Date(Date.now() + 36000).toISOString().slice(0, 19).replace('T', ' ');
-        db.updateUserAccessTokenAndExpiresAt(user.spotify_id, access_token, token_expires_at, (err) => {
-          if (err) {
-            console.log(err);
-            res.sendStatus(500);
-          } else {
-            next();
-          }
+      req.roomHost = user;
+      next();
+    }
+  });
+}
+
+const getNewAccessToken = async (req, res, next) => {
+  const needsRefresh = new Date() >= new Date(req.roomHost.token_expires_at) - 60000;
+  
+  if (needsRefresh) {
+    const refreshToken = req.roomHost.refresh_token;
+    const dataString = `?grant_type=refresh_token&refresh_token=${refreshToken}`;
+    const encoded = btoa(`${process.env.SPOTIFY_CLIENT_ID}:${process.env.SPOTIFY_CLIENT_SECRET}`);
+    const options = {
+      method: 'POST',
+      url: `https://accounts.spotify.com/api/token${dataString}`,
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/x-www-form-urlencoded',
+        'Authorization': `Basic ${encoded}`,
+      },
+    };
+    
+    try {
+      await axios(options)
+        .then(({data: {access_token}}) => {
+          req.roomHost.newTokenExpiresAt = new Date(Date.now() + 36000).toISOString().slice(0, 19).replace('T', ' ');
+          req.roomHost.newAccessToken = access_token;
         });
-      } else {
-        next();
-      }
+    } catch(err) {
+      console.log(err);
+      res.send(500);
     }
-  });
-});
+  }
 
-router.get('/devices', (req, res) => {
-  db.getUserByRoomId(req.session.roomId, async (err, data) => {
-    if (err) {
-      console.log(`Couldn't retrieve user`, err);
-      res.sendStatus(500);
-    } else {
-      const [user] = data;
-      let accessToken = user.access_token;
+  next();
+}
 
-      const {data: {devices}} = await axios.get('https://api.spotify.com/v1/me/player/devices', {
-        headers: {
-          Authorization: `Bearer ${accessToken}`
-        }
-      });
-
-      console.log('user devices', devices);
-      res.json(devices);
-    }
-  });
-});
-
-router.get('/search', (req, res) => {
-  const { q } = req.query;
-  db.getUserByRoomId(req.session.roomId, (err, data) => {
-    if (err) {
-      console.log(`Couldn't retrieve user`, err);
-      res.sendStatus(500);
-    } else {
-      const [user] = data;
-      let accessToken = user.access_token;
-
-      axios.get('https://api.spotify.com/v1/search', {
-        headers: {
-          Authorization: `Bearer ${accessToken}`
-        },
-        params: {
-          q: q,
-          type: "track",
-          limit: 20
-        }
-      })
-      .then(({ data: { tracks } }) => {
-        res.json(tracks);
-      })
-      .catch(err => {
+const updateAccessToken = (req, res, next) => {
+  if (req.roomHost.newAccessToken) {
+    db.updateUserAccessTokenAndExpiresAt(req.roomHost.spotify_id, req.roomHost.newAccessToken, req.roomHost.newTokenExpiresAt, (err) => {
+      if (err) {
         console.log(err);
         res.sendStatus(500);
-      });
+      }
+    });
+  }
+
+  next();
+}
+
+router.use(getUserByRoomId, getNewAccessToken, updateAccessToken);
+
+router.get('/search', async (req, res) => {
+  const { q } = req.query;
+  const options = {
+    method: 'GET',
+    url: 'https://api.spotify.com/v1/search',
+    headers: {
+      Authorization: `Bearer ${req.roomHost.access_token}`
+    },
+    params: {
+      q: q,
+      type: "track",
+      limit: 20
     }
-  });
+  };
+
+  try {
+    const { data: { tracks } } = await axios(options);
+    res.json(tracks);
+  } catch(err) {
+    console.log(err);
+    res.sendStatus(500);
+  }
 });
 
-// Spotify play
-router.post('/playSong/:songId', (req, res) => {
-  console.log(req.params);
+router.post('/playSong/:songId', async (req, res) => {
   const {songId} = req.params;
-  db.getUserByRoomId(req.session.roomId, (err, data) => {
-    if (err) {
-      console.log(`Couldn't retrieve user`, err);
-      res.sendStatus(500);
-    } else {
-      const [user] = data;
-      let accessToken = user.access_token;
-      const options = {
-        method: 'PUT',
-        url: 'https://api.spotify.com/v1/me/player/play',
-        headers: {
-          'Authorization': `Bearer ${accessToken}`
-        },
-        data: {
-          uris: [`spotify:track:${songId}`]
-        }
-      };
-  
-      axios(options)
-      .then(response => {
-        console.log(response);
-        res.json(response);
-      })
-      .catch(err => {
-        console.log('is this the error?',err);
-        res.sendStatus(500);
-      });
+  const options = {
+    method: 'PUT',
+    url: 'https://api.spotify.com/v1/me/player/play',
+    headers: {
+      'Authorization': `Bearer ${req.roomHost.access_token}`
+    },
+    data: {
+      uris: [`spotify:track:${songId}`]
     }
-  });
+  };
+
+  try {
+    await axios(options);
+    res.end();
+  } catch(err) {
+    console.log(err);
+    res.sendStatus(500);
+  }
 });
 
-router.get('/currentSong', (req, res) => {
-  db.getUserByRoomId(req.session.roomId, (err, data) => {
-    if (err) {
-      console.log(`Couldn't retrieve user`, err);
-      res.sendStatus(500);
-    } else {
-      const [user] = data;
-      let accessToken = user.access_token;
-
-      axios.get('https://api.spotify.com/v1/me/player', {
-        headers: {
-          Authorization: `Bearer ${accessToken}`
-        }
-      })
-      .then(({data}) => {
-        if (typeof data === 'object' && data.progress_ms + 1200 >= data.item.duration_ms) {
-          res.json({ playNextSong: true });
-        } else {
-          res.json({ playNextSong: false });
-        }
-      })
-      .catch(err => {
-        console.log('not able to get current song',err);
-        res.sendStatus(500);
-      });
+router.get('/currentSong', async (req, res) => {
+  const options = {
+    method: 'GET',
+    url: 'https://api.spotify.com/v1/me/player',
+    headers: {
+      Authorization: `Bearer ${req.roomHost.access_token}`
     }
-  });
+  };
+
+  try {
+    const {data} = await axios(options);
+    if (typeof data === 'object' && data.progress_ms + 1200 >= data.item.duration_ms) {
+      res.json({ playNextSong: true });
+    } else {
+      res.json({ playNextSong: false });
+    }
+  } catch(err) {
+    console.log(err);
+    res.sendStatus(500);
+  }
 });
 
 module.exports = router;
