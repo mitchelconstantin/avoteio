@@ -101,9 +101,10 @@ class Main extends Component {
   getSongStatus() {
     this.checkSongStatus = setTimeout(async () => {
       const {data:{playNextSong}} = await axios.get('/spotify/currentSong');
+      console.log(playNextSong);
       if (playNextSong) {
         try {
-          clearInterval(this.checkSongStatus);
+          clearTimeout(this.checkSongStatus);
           await this.playNextSong();
         } catch(err) {
           console.log('there was an error playing the song', err);
@@ -115,15 +116,15 @@ class Main extends Component {
   }
 
   async playNextSong() {
+    console.log(this.state.songBank[0]);
     const songId = this.state.songBank[0].spotify_id;
-    const playSong = axios.post(`/spotify/playSong/${songId}`);
-    const updatePlayedStatus = axios.post('/api/markSongPlayed', {
+    await axios.post(`/spotify/playSong/${songId}`);
+    await axios.post('/api/markSongPlayed', {
       songObj: this.state.songBank[0]
     });
-
-    await Promise.all([playSong, updatePlayedStatus])
     
     this.getAllSongs();
+    this.getSongStatus();
   }
 
   componentWillUnmount() {

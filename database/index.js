@@ -93,8 +93,13 @@ const addSongToRoom = (songObj, roomId, callback) => {
                     }
                   });
                 } else {
-                  callback(null, 'already added to the room');
-                  console.log('already added to the room');
+                  connection.query('UPDATE songs_rooms SET upvote = 0, downvote = 0, isPlayed = 0 WHERE song_id = ? AND room_id = ?', [id, roomId], (err, results) => {
+                    if (err) {
+                      callback(err);
+                    } else {
+                      callback(null, results);
+                    }
+                  });
                 }
               }
             });
