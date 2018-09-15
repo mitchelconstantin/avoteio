@@ -106,7 +106,7 @@ const addSongToRoom = (songObj, roomId, callback) => {
 };
 
 const showAllUnplayedSongsInRoom = (roomId, callback) => {
-  connection.query('SELECT * FROM songs s INNER JOIN songs_rooms sr ON s.id = sr.song_id AND sr.room_id = ? AND sr.isPlayed = 0', [roomId], (err, results) => {
+  connection.query('SELECT * FROM songs s INNER JOIN songs_rooms sr ON s.id = sr.song_id AND sr.room_id = ? AND sr.isPlayed = 0 ORDER BY (sr.upvote - sr.downvote) DESC', [roomId], (err, results) => {
     if (err) {
       callback(err);
     } else {
@@ -153,35 +153,23 @@ const markRoomAsInaccessible = (roomId, callback) => {
 };
 
 const upvoteSongInRoom = (songObj, roomId, callback) => {
-  getSongsId(songObj, (err, results) => {
+  const id = songObj.song_id;
+  connection.query('UPDATE songs_rooms SET upvote = upvote + 1 WHERE song_id = ? AND room_id = ?', [id, roomId], (err, results) => {
     if (err) {
       callback(err);
     } else {
-      const id = results[0].id;
-      connection.query('UPDATE songs_rooms SET upvote = upvote + 1 WHERE song_id = ? AND room_id = ?', [id, roomId], (err, results) => {
-        if (err) {
-          callback(err);
-        } else {
-          callback(null, results);
-        }
-      });
+      callback(null, results);
     }
   });
 };
 
 const downvoteSongInRoom = (songObj, roomId, callback) => {
-  getSongsId(songObj, (err, results) => {
+  const id = songObj.song_id;
+  connection.query('UPDATE songs_rooms SET downvote = downvote + 1 WHERE song_id = ? AND room_id = ?', [id, roomId], (err, results) => {
     if (err) {
       callback(err);
     } else {
-      const id = results[0].id;
-      connection.query('UPDATE songs_rooms SET downvote = downvote + 1 WHERE song_id = ? AND room_id = ?', [id, roomId], (err, results) => {
-        if (err) {
-          callback(err);
-        } else {
-          callback(null, results);
-        }
-      });
+      callback(null, results);
     }
   });
 };

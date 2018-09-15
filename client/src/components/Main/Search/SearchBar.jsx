@@ -43,17 +43,10 @@ class SearchBar extends Component {
   }
 
   selectSong(songObj) {
-    axios.post('/api/saveSong', {songObj})
-    .then((response) => {
-      //ONCE IT IS SUCCESFULLY POSTED, GET ALL SONGS/REFRESH SONGBANK
-      this.setState({
-        spotifyResults: []
-      })
-      this.props.getAllSongs()
-      
-    }).catch(function (error) {
-      console.log('POST failed', error)
-    })
+    this.props.addSong(songObj);
+    this.setState({
+      spotifyResults: []
+    });
   }
 
   render() {
