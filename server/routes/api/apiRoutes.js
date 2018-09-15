@@ -46,9 +46,9 @@ router.get('/getAllSongs', (req, res) => {
 
 router.post('/saveSong', (req,res) => {
   let roomId = req.session.roomId;
-  let songObj = req.body.songObj;
+  let song = req.body.song;
   //ADD SONG TO CURRENT ROOM 
-  db.addSongToRoom(songObj, roomId, function(err,data){
+  db.addSongToRoom(song, roomId, function(err,data) {
     if (err) {
       console.log('NOPE insert song',err);
       res.sendStatus(500);
@@ -67,6 +67,30 @@ router.post('/markSongPlayed', (req,res) => {
       res.sendStatus(500);
     } else {
       res.json(result);
+    }
+  });
+});
+
+router.post('/upvoteSong', (req, res) => {
+  const {song} = req.body;
+  db.upvoteSongInRoom(song, req.session.roomId, (err) => {
+    if (err) {
+      console.log(err);
+      res.sendStatus(500);
+    } else {
+      res.end();
+    }
+  });
+});
+
+router.post('/downvoteSong', (req, res) => {
+  const {song} = req.body;
+  db.downvoteSongInRoom(song, req.session.roomId, (err) => {
+    if (err) {
+      console.log(err);
+      res.sendStatus(500);
+    } else {
+      res.end();
     }
   });
 });

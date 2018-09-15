@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { Link, Route, Redirect, withRouter } from 'react-router-dom';
-import Main from './Main/Main.jsx'
-import CreateRoom from './CreateRoom.jsx'
+import Main from './Main/Main.jsx';
+import CreateRoom from './CreateRoom.jsx';
 
 class App extends Component {
   constructor(props) {
@@ -11,8 +11,8 @@ class App extends Component {
       roomID: null
     };
 
-    this.setUserID = this.setUserID.bind(this)
-    this.setRoomID = this.setRoomID.bind(this)
+    this.setUserID = this.setUserID.bind(this);
+    this.setRoomID = this.setRoomID.bind(this);
   }
 
   setUserID (userID) {

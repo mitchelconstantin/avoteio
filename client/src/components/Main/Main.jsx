@@ -1,9 +1,8 @@
 import React, { Component } from 'react';
+import io from 'socket.io-client';
+import axios from 'axios';
 import SearchBar from './Search/SearchBar.jsx';
 import SongList from './SongList.jsx';
-// import Song from './Song.jsx';
-import axios from 'axios'; 
-
 
 class Main extends Component {
   constructor(props) {
@@ -17,6 +16,23 @@ class Main extends Component {
     this.getAllSongs = this.getAllSongs.bind(this);
     this.getSongStatus = this.getSongStatus.bind(this);
     this.playNextSong = this.playNextSong.bind(this);
+    this.addSong = this.addSong.bind(this);
+    this.upvoteSong = this.upvoteSong.bind(this);
+    this.downvoteSong = this.downvoteSong.bind(this);
+
+    this.socket = io.connect();
+    this.socket.on('connect', () => {
+      console.log('connection made client side');
+    });
+    
+    // Add event listeners
+    this.socket.on('songAdded', () => {
+      this.getAllSongs();
+    });
+
+    this.socket.on('songWasVoted', () => {
+      this.getAllSongs();
+    });
   }
   
   componentDidMount() {
@@ -36,6 +52,36 @@ class Main extends Component {
     });
   }
 
+  upvoteSong(song) {
+    axios.post('/api/upvoteSong', {song})
+    .then(response => {
+      this.socket.emit('songVote');
+    })
+    .catch(err => {
+      console.log(err);
+    });
+  }
+
+  downvoteSong(song) {
+    axios.post('/api/downvoteSong', {song})
+    .then(response => {
+      this.socket.emit('songVote');
+    })
+    .catch(err => {
+      console.log(err);
+    });
+  }
+
+  addSong(song) {
+    axios.post('/api/saveSong', {song})
+    .then((response) => {
+      this.socket.emit('addSong');
+    })
+    .catch(function (error) {
+      console.log('POST failed', error)
+    });
+  }
+
   getAllSongs() {
     axios.get('/api/getAllSongs', {
       params: {
@@ -44,12 +90,12 @@ class Main extends Component {
     })
     .then(({data}) => {
       this.setState({
-        songBank: data.reverse()
+        songBank: data
       });
     })
     .catch((error) => {
       console.log(error);
-    })
+    });
   }
 
   getSongStatus() {
@@ -65,18 +111,6 @@ class Main extends Component {
       } else {
         this.getSongStatus();
       }
-      // axios.get('/spotify/currentSong')
-      // .then(async ({data:{playNextSong}}) => {
-      //   if (playNextSong) {
-      //     // this.setState({
-      //     //   playNextSong: true
-      //     // })
-      //     await this.playNextSong();
-      //   }
-      // })
-      // .catch((error)=> {
-      //   console.log(error);
-      // })
     }, 1000);
   }
 
@@ -99,10 +133,20 @@ class Main extends Component {
   render() {
     return (  
       <div className="main">
-        <h1>Howdy, World!</h1>
+        <h1>Welcome to room Howdy</h1>
         <div className="center">
-          <SongList songBank={this.state.songBank} dropdownSongs={this.dropdownSongs}/>
-          <SearchBar updateSongBank={this.updateSongBank} roomID={this.state.roomID} getAllSongs={this.getAllSongs}/>
+          <SongList 
+            songBank={this.state.songBank}
+            dropdownSongs={this.dropdownSongs}
+            upvoteSong={this.upvoteSong}
+            downvoteSong={this.downvoteSong}
+          />
+          <SearchBar
+            updateSongBank={this.updateSongBank}
+            roomID={this.state.roomID}
+            getAllSongs={this.getAllSongs}
+            addSong={this.addSong}
+          />
         </div>
       </div>
     )
