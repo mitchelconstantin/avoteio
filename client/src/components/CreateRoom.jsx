@@ -79,7 +79,7 @@ class CreateRoom extends Component {
       <div className="main-login">
         {component}
         <div className="join-room">
-          <h3>Or join an existing room</h3>
+          <p>or join an existing room</p>
           <div className="join-form">
             <input className="join-input" type="text" placeholder="Enter a room code..." value={this.state.roomCode} onChange={this.handleRoomCodeChange} />
             <button className="join-btn" onClick={() => this.joinRoom()}>Join Room</button>

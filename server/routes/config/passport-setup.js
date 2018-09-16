@@ -23,6 +23,7 @@ passport.use(
     callbackURL: '/auth/spotify/redirect'
   }, (accessToken, refreshToken, expires_in, profile, done) => {
     const tokenExpiresAt = new Date(Date.now() + (expires_in * 1000)).toISOString().slice(0, 19).replace('T', ' ');
+    console.log('STORING TOKEN EXPIRES AT: ', tokenExpiresAt);
     db.addUser({spotify_id: profile.id, spotify_display_name: profile.displayName, access_token: accessToken, refresh_token: refreshToken, token_expires_at: tokenExpiresAt}, (err, user) => {
       if (err) {
         console.log(err);

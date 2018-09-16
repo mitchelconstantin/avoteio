@@ -51,7 +51,7 @@ class SearchBar extends Component {
 
   render() {
     return (
-      <div>
+      <div className="search">
         <div className="search-bar">
           <input className="search-input" type="text" value={this.state.input} onChange={this.handleInputChange} />
           <button className="search-submit" onClick={(e) => this.handleClick(e)}>Search</button>

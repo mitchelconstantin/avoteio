@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
-import { Link, Route, Redirect, withRouter } from 'react-router-dom';
+import { Route, withRouter } from 'react-router-dom';
 import Main from './Main/Main.jsx';
 import CreateRoom from './CreateRoom.jsx';
+import SideNav from './SideNav.jsx';
 
 class App extends Component {
   constructor(props) {
@@ -30,6 +31,7 @@ class App extends Component {
   render() {
     return (
       <div>
+        <SideNav userId={this.state.userID}/>
         <Route 
           exact path='/'
           render={(props) => (
@@ -43,7 +45,9 @@ class App extends Component {
         />
         <Route 
           path='/rooms/:roomId'
-          component={Main}
+          render={(props) => (
+            <Main {...props} userId={this.state.userID}/>
+          )}
         />
       </div>
     );
