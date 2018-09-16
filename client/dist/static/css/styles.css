@@ -12,6 +12,7 @@ body {
 
 a {
   text-decoration: none;
+  color: #fff;
 }
 
 input {
@@ -49,6 +50,80 @@ button:hover {
 .center {
   width: 600px;
   height: 70vh;
+}
+
+.side-nav {
+  min-height: 100vh;
+  position: fixed;
+  width: 150px;
+  padding: 10px 20px;
+  transition: all 0.3s;
+}
+
+.side-nav.hidden {
+  background: transparent;
+  transform: translateX(-72%);
+}
+
+.side-nav.active {
+  background: rgb(54, 54, 54);
+  transform: translateX(0);
+}
+
+.nav-carrot {
+  width: 100%;
+}
+
+.nav-carrot>i {
+  float: right;
+}
+
+.nav-carrot:hover {
+  cursor: pointer;
+}
+
+.nav-logo {
+  width: 90px;
+}
+
+.nav-logo>img {
+  max-height: 100%;
+  max-width:100%;
+}
+
+.nav-links {
+  display: flex;
+  flex-direction: column;
+}
+
+.nav-link {
+  font-weight: 200;
+  color: rgba(255, 255, 255, 0.8);
+  padding: 10px 0;
+}
+
+.nav-link:hover {
+  color: rgba(255, 255, 255, 1);
+  cursor: pointer;
+}
+
+.current-song {
+  width: 600px;
+  height: 100px;
+  display: flex;
+  margin-bottom: 20px;
+  justify-content: center;
+}
+
+.current-image {
+  height: 100%;
+  margin-right: 50px;
+}
+
+.current-image>img {
+  max-height: 100%;
+  max-width: 100%;
+  margin-right: 50px;
 }
 
 .song-list {
@@ -98,6 +173,10 @@ button:hover {
   cursor: pointer;
 }
 
+/* .search {
+  min-width: 100vw;
+} */
+
 .search-bar {
   width: 100%;
   height: 40px;
@@ -144,11 +223,16 @@ button:hover {
   background: rgb(48, 167, 70);
   border-radius: 50px;
   padding: 10px 20px;
+  margin-bottom: 20px;
   color: #fff;
 }
 
 .spotify-login:hover {
   background: rgb(40, 177, 65);
+}
+
+.join-room {
+  text-align: center;
 }
 
 .join-form {

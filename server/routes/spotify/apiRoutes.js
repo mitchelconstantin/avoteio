@@ -17,7 +17,7 @@ const getUserByRoomId = (req, res, next) => {
 }
 
 const getNewAccessToken = async (req, res, next) => {
-  const needsRefresh = new Date() >= new Date(req.roomHost.token_expires_at) - 60000;
+  const needsRefresh = new Date() >= new Date(req.roomHost.token_expires_at - (1000 * 60 * 60 * 5));
   
   if (needsRefresh) {
     const refreshToken = req.roomHost.refresh_token;
@@ -109,6 +109,13 @@ router.post('/playSong/:songId', async (req, res) => {
   }
 });
 
+router.get('/roomHost', (req, res) => {
+  console.log(req.roomHost);
+  res.json({
+    roomHostId: req.roomHost.spotify_id
+  });
+})
+
 router.get('/currentSong', async (req, res) => {
   const options = {
     method: 'GET',
@@ -120,10 +127,16 @@ router.get('/currentSong', async (req, res) => {
 
   try {
     const {data} = await axios(options);
-    if (typeof data === 'object' && data.progress_ms + 3000 >= data.item.duration_ms) {
-      res.json({ playNextSong: true });
-    } else {
-      res.json({ playNextSong: false });
+    if (typeof data === 'object') {
+      res.json({
+        timeUntilNextSong: data.item.duration_ms - data.progress_ms,
+        isPlaying: data.is_playing,
+        songData: {
+          title: data.item.name,
+          artist: data.item.artists[0].name,
+          image: data.item.album.images[1].url
+        }
+      });
     }
   } catch(err) {
     console.log(err);

@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import io from 'socket.io-client';
 import axios from 'axios';
+import CurrentSong from './CurrentSong.jsx';
 import SearchBar from './Search/SearchBar.jsx';
 import SongList from './SongList.jsx';
 
@@ -9,23 +10,27 @@ class Main extends Component {
     super(props);
     this.state = {
       songBank: [],
+      currentSong: null,
       roomID: null,
+      roomHostId: null,
+      roomName: '',
       playNextSong: false
     };
     this.checkSongStatus = null;
+    this.setPlayNextSong = null;
     this.getAllSongs = this.getAllSongs.bind(this);
     this.getSongStatus = this.getSongStatus.bind(this);
     this.playNextSong = this.playNextSong.bind(this);
     this.addSong = this.addSong.bind(this);
     this.upvoteSong = this.upvoteSong.bind(this);
     this.downvoteSong = this.downvoteSong.bind(this);
+    this.getCurrentSong = this.getCurrentSong.bind(this);
 
     this.socket = io.connect();
     this.socket.on('connect', () => {
       console.log('connection made client side');
     });
     
-    // Add event listeners
     this.socket.on('songAdded', () => {
       this.getAllSongs();
     });
@@ -38,14 +43,14 @@ class Main extends Component {
   componentDidMount() {
     const {roomId} = this.props.match.params;
     axios.post(`/api/rooms/${roomId}`)
-    .then(() => {
+    .then(async () => {
       this.setState({
         roomID: roomId
       });
-      this.getAllSongs();
-    })
-    .then(() => {
-      this.getSongStatus();
+      await this.getHostId();
+      await this.getAllSongs();
+      await this.getSongStatus();
+      await this.getCurrentSong();
     })
     .catch(err => {
       console.log(err);
@@ -54,7 +59,7 @@ class Main extends Component {
 
   upvoteSong(song) {
     axios.post('/api/upvoteSong', {song})
-    .then(response => {
+    .then(() => {
       this.socket.emit('songVote');
     })
     .catch(err => {
@@ -64,7 +69,7 @@ class Main extends Component {
 
   downvoteSong(song) {
     axios.post('/api/downvoteSong', {song})
-    .then(response => {
+    .then(() => {
       this.socket.emit('songVote');
     })
     .catch(err => {
@@ -72,9 +77,24 @@ class Main extends Component {
     });
   }
 
+  async getHostId() {
+    const {data: {roomHostId}} = await axios.get('/spotify/roomHost');
+    this.setState({
+      roomHostId
+    });
+    console.log(this.state.roomHostId, this.props.userId);
+  }
+
+  async getCurrentSong() {
+    const {data: {songData}} = await axios.get('/spotify/currentSong');
+    this.setState({
+      currentSong: songData
+    });
+  }
+
   addSong(song) {
     axios.post('/api/saveSong', {song})
-    .then((response) => {
+    .then(() => {
       this.socket.emit('addSong');
     })
     .catch(function (error) {
@@ -99,24 +119,22 @@ class Main extends Component {
   }
 
   getSongStatus() {
-    this.checkSongStatus = setTimeout(async () => {
-      const {data:{playNextSong}} = await axios.get('/spotify/currentSong');
-      console.log(playNextSong);
-      if (playNextSong) {
-        try {
-          clearTimeout(this.checkSongStatus);
-          await this.playNextSong();
-        } catch(err) {
-          console.log('there was an error playing the song', err);
-        }
-      } else {
+    if (this.props.userId === this.state.roomHostId) {
+      clearTimeout(this.updateNextSongTimer);
+
+      this.updateNextSongTimer = setTimeout(async () => {
+        const {data} = await axios.get('/spotify/currentSong');
+        const {timeUntilNextSong} = data;
+        this.setPlayNextSong = setTimeout(this.playNextSong, timeUntilNextSong);
         this.getSongStatus();
-      }
-    }, 1000);
+      }, 10000);
+    }
   }
 
   async playNextSong() {
-    console.log(this.state.songBank[0]);
+    this.setState({
+      currentSong: this.state.songBank[0]
+    });
     const songId = this.state.songBank[0].spotify_id;
     await axios.post(`/spotify/playSong/${songId}`);
     await axios.post('/api/markSongPlayed', {
@@ -124,17 +142,19 @@ class Main extends Component {
     });
     
     this.getAllSongs();
-    this.getSongStatus();
   }
 
   componentWillUnmount() {
-    clearInterval(this.checkSongStatus);
+    clearTimeout(this.setPlayNextSong);
+    clearTimeout(this.updateNextSongTimer);
   }
 
   render() {
+    let currentSong = this.state.currentSong ? <CurrentSong song={this.state.currentSong}/> : "";
     return (  
       <div className="main">
-        <h1>Welcome to room Howdy</h1>
+        <h1>Welcome to room "{this.state.roomName}"</h1>
+        {currentSong}
         <div className="center">
           <SongList 
             songBank={this.state.songBank}
