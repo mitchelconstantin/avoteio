@@ -29,7 +29,7 @@ const showAllSongsInRoom = (roomId, callback) => {
 };
 
 const addSongToSongsTable = (songObj, callback) => {
-  connection.query('INSERT INTO songs (title, artist, image, spotify_id) VALUES (?, ?, ?, ?)', [songObj.name, songObj.artists[0].name, songObj.image, songObj.id], (err, results) => {
+  connection.query('INSERT INTO songs (title, artist, image, spotify_id) VALUES (?, ?, ?, ?)', [songObj.name, songObj.artists[0].name, songObj.album.images[1].url, songObj.id], (err, results) => {
     if (err) {
       callback(err);
     } else {
