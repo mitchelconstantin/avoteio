@@ -14,6 +14,7 @@ class Main extends Component {
       roomID: null,
       roomHostId: null,
       roomName: '',
+      userId: null,
       playNextSong: false
     };
     this.checkSongStatus = null;
@@ -43,18 +44,22 @@ class Main extends Component {
   componentDidMount() {
     const {roomId} = this.props.match.params;
     axios.post(`/api/rooms/${roomId}`)
-    .then(async () => {
+    .then(({data}) => {
       this.setState({
-        roomID: roomId
+        roomID: roomId,
+        userId: data.userId
       });
-      await this.getHostId();
-      await this.getAllSongs();
-      await this.getSongStatus();
-      this.pollCurrentSong();
+    })
+    .then(() => {
+      this.getHostId();
     })
     .catch(err => {
       console.log(err);
     });
+
+    this.getAllSongs();
+    this.getSongStatus();
+    this.pollCurrentSong();
   }
 
   upvoteSong(song) {
@@ -82,7 +87,6 @@ class Main extends Component {
     this.setState({
       roomHostId
     });
-    console.log(this.state.roomHostId, this.props.userId);
   }
 
   pollCurrentSong() {
@@ -126,7 +130,7 @@ class Main extends Component {
   }
 
   getSongStatus() {
-    if (this.props.userId === this.state.roomHostId) {
+    if (this.state.userId === this.state.roomHostId) {
       clearTimeout(this.updateNextSongTimer);
 
       this.updateNextSongTimer = setTimeout(async () => {
