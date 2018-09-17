@@ -74,7 +74,7 @@ class CreateRoom extends Component {
         </div>
       )
     } else {
-      component = <a className="spotify-login" href="/auth/login">+ Login With Spotify</a>
+      component = <a className="spotify-login" href="/auth/login"><i className="fab fa-spotify"></i> Login With Spotify</a>
     }
 
     return (

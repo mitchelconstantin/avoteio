@@ -12,9 +12,11 @@ router.post('/rooms/:roomId', (req, res) => {
       console.log('NO DATA 4 U',err);
       res.sendStatus(500);
     } else {
-      console.log('data reterieval success!,',data);
-      req.session.roomId = req.params.roomId;  
-      res.json(data);
+      req.session.roomId = req.params.roomId;
+      res.json({
+        data,
+        userId: req.session.spotifyId
+      });
     }
   });
 });
