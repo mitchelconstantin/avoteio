@@ -50,7 +50,7 @@ class Main extends Component {
       await this.getHostId();
       await this.getAllSongs();
       await this.getSongStatus();
-      await this.getCurrentSong();
+      this.pollCurrentSong();
     })
     .catch(err => {
       console.log(err);
@@ -83,6 +83,13 @@ class Main extends Component {
       roomHostId
     });
     console.log(this.state.roomHostId, this.props.userId);
+  }
+
+  pollCurrentSong() {
+    setTimeout(async () => {
+      await this.getCurrentSong();
+      this.pollCurrentSong();
+    }, 5000);
   }
 
   async getCurrentSong() {
@@ -125,23 +132,23 @@ class Main extends Component {
       this.updateNextSongTimer = setTimeout(async () => {
         const {data} = await axios.get('/spotify/currentSong');
         const {timeUntilNextSong} = data;
-        this.setPlayNextSong = setTimeout(this.playNextSong, timeUntilNextSong);
+
+        clearTimeout(this.setPlayNextSong);
+        this.setPlayNextSong = setTimeout(this.playNextSong, timeUntilNextSong - 1500);
         this.getSongStatus();
       }, 10000);
     }
   }
 
   async playNextSong() {
-    this.setState({
-      currentSong: this.state.songBank[0]
-    });
     const songId = this.state.songBank[0].spotify_id;
     await axios.post(`/spotify/playSong/${songId}`);
     await axios.post('/api/markSongPlayed', {
       songObj: this.state.songBank[0]
+    })
+    .then(() => {
+      this.getAllSongs();
     });
-    
-    this.getAllSongs();
   }
 
   componentWillUnmount() {
@@ -153,7 +160,7 @@ class Main extends Component {
     let currentSong = this.state.currentSong ? <CurrentSong song={this.state.currentSong}/> : "";
     return (  
       <div className="main">
-        <h1>Welcome to room "{this.state.roomName}"</h1>
+        <h1>Welcome to your Avoteio room!</h1>
         {currentSong}
         <div className="center">
           <SongList 
