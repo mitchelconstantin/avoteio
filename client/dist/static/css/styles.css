@@ -139,7 +139,7 @@ button:hover {
 }
 
 .song-list-entry {
-  height: 60px;
+  height: 66px;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -155,6 +155,10 @@ button:hover {
 
 .song-title {
   font-weight: 600;
+  height: 100%;
+  overflow: hidden;
+  width: 33%;
+  display: flex;
 }
 
 .song-by {
@@ -295,7 +299,7 @@ button:hover {
 }
 
 .dropdown-song-list-entry {
-  height: 60px;
+  height: 66px;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -306,4 +310,15 @@ button:hover {
 .dropdown-song-list-entry:hover {
   cursor: pointer;
   background: rgba(255, 255, 255, 0.4);
+}
+
+@media only screen and (max-width: 600px) {
+  .center {
+    width: 100%;
+    height: 70vh;
+  }
+
+  .song-by {
+    display: none;
+  }
 }

@@ -111,7 +111,6 @@ router.post('/playSong/:songId', async (req, res) => {
 });
 
 router.get('/roomHost', (req, res) => {
-  console.log(req.roomHost);
   res.json({
     roomHostId: req.roomHost.spotify_id
   });
