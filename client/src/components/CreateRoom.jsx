@@ -67,8 +67,10 @@ class CreateRoom extends Component {
       component = (
         <div className="create-room">
           <h2>Create A Room</h2>
-          <input type="text" value={this.state.input} onChange={this.handleInputChange} />
-          <button onClick={(e) => this.handleClick(e)}>button</button>
+            <div className="create-form">            
+              <input className="create-input" type="text" value={this.state.input} onChange={this.handleInputChange} />
+              <button className='create-btn' onClick={(e) => this.handleClick(e)}>Create</button>
+            </div>
         </div>
       )
     } else {
