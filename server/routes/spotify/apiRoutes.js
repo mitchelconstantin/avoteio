@@ -36,7 +36,8 @@ const getNewAccessToken = async (req, res, next) => {
     try {
       await axios(options)
         .then(({data: {access_token}}) => {
-          req.roomHost.newTokenExpiresAt = new Date(Date.now() + 36000).toISOString().slice(0, 19).replace('T', ' ');
+          const time = new Date();
+          req.roomHost.newTokenExpiresAt = new Date(time.setHours(time.getHours() + 1)).toISOString().slice(0, 19).replace('T', ' ');
           req.roomHost.newAccessToken = access_token;
         });
     } catch(err) {
