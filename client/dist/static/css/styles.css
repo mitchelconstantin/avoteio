@@ -18,6 +18,7 @@ a {
 input {
   font-size: 1em;
   padding: 0 10px;
+  color: rgb(46, 46, 46);
 }
 
 input:focus, button:focus {
@@ -173,10 +174,6 @@ button:hover {
   cursor: pointer;
 }
 
-/* .search {
-  min-width: 100vw;
-} */
-
 .search-bar {
   width: 100%;
   height: 40px;
@@ -188,12 +185,8 @@ button:hover {
   height: 100%;
   border: 1px solid transparent;
   border-bottom-left-radius: 5px;
-  background: rgb(255, 255, 255, 0.4);
+  background: rgb(255, 255, 255, 0.8);
   transition: 0.3s all;
-}
-
-.search-input {
-  color: #fff;
 }
 
 .search-input:focus {
@@ -203,6 +196,8 @@ button:hover {
 .search-submit {
   width: 20%;
   height: 100%;
+  background: rgb(2, 169, 22);
+  color: #fff;
   border-radius: 0;
   border-bottom-right-radius: 5px;
 }
@@ -264,4 +259,51 @@ button:hover {
 
 .join-btn:hover {
   background: rgb(233, 60, 60);
+}
+
+/* Hunter addition */
+.create-form {
+  width: 250px;
+  height: 40px;
+  display: flex;
+}
+.create-input {
+  height: 100%;
+  width: 70%;
+  border: 1px solid transparent;
+  border-top-left-radius: 5px;
+  border-bottom-left-radius: 5px;
+  transition: all 0.2s;
+}
+.create-input:focus {
+  border: 1px solid rgba(48, 167, 70, 0.5);
+}
+.create-btn {
+  width: 30%;
+  background: rgb(2, 169, 22);
+  color: #fff;
+  border-top-right-radius: 5px;
+  border-bottom-right-radius: 5px;
+}
+.create-btn:hover {
+  background: rgb(98, 244, 120);
+}
+
+.dropdown-song-list {
+  background: rgba(255, 255, 255, 0.2);
+  overflow: scroll;
+}
+
+.dropdown-song-list-entry {
+  height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.dropdown-song-list-entry:hover {
+  cursor: pointer;
+  background: rgba(255, 255, 255, 0.4);
 }

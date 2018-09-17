@@ -141,10 +141,11 @@ class Main extends Component {
   }
 
   async playNextSong() {
-    const songId = this.state.songBank[0].spotify_id;
-    await axios.post(`/spotify/playSong/${songId}`);
+    const song = this.state.songBank[0];
+    const {spotify_id} = song;
+    await axios.post(`/spotify/playSong/${spotify_id}`);
     await axios.post('/api/markSongPlayed', {
-      songObj: this.state.songBank[0]
+      songObj: song
     })
     .then(() => {
       this.getAllSongs();
