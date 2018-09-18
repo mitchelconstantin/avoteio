@@ -17,6 +17,7 @@ const getUserByRoomId = (req, res, next) => {
 }
 
 const getNewAccessToken = async (req, res, next) => {
+  // 👇🏼 This date comparison doesn't work for some reason. Can't figure out js date objects
   const needsRefresh = new Date() >= new Date(req.roomHost.token_expires_at - (1000 * 60 * 60 * 5));
   
   if (needsRefresh) {

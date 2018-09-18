@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import DropdownSongList from './DropdownSongList.jsx';
-import { data } from '../../../dummy_data.js';
 import axios from 'axios';
 
 
