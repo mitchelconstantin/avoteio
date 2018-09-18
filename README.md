@@ -13,28 +13,30 @@ Install the dependencies and devDependencies and start the server.
 $ cd avoteio
 $ npm install
 ```
+Create your database by running mysql -u root -p < schema.sql from the root folder
+
 Start the server in its own terminal
  ``` $npm run server-dev```
  
  In a separate terminal run the client
  ``` $npm run react-dev ```
 
+### Spotify Setup
+* Create a [Spotify Developer Account](https://developer.spotify.com/dashboard/login)
+* Create a new app
+* Add your SPOTIFY\_CLIENT\_ID and SPOTIFY\_CLIENT\_SECRET to your .env file and deployment environment
+* Navigate to 'Edit Settings' in your developer account to whitelist your redirect uri
 
 ### Tech
 
 Avoteio uses a number of open source projects to work properly:
 
 * [React.js](https://reactjs.org/) - Facebook's front-end framework
-* [React Router](https://reacttraining.com/react-router/) -Declarative routing for React
+* [React Router](https://reacttraining.com/react-router/) - Declarative routing for React
 * [node.js](https://nodejs.org/en/) - evented I/O for the backend
-* [Express](https://expressjs.com/) - fast node.js network app framework [@tjholowaychuk]
+* [Express](https://expressjs.com/) - node.js framework [@tjholowaychuk]
 * [Passport](http://www.passportjs.org/docs/oauth/) - Handling for Spotify authorization (OAuth)
-* Socket.Io - Use of sockets to handle real-time voting and song addition using sockets.
-
-
-
-
-
+* Socket.Io - Handle real-time voting and song addition using sockets.
 
 
 License
@@ -45,5 +47,5 @@ MIT
 ## Authors
 * [**Shawn Acevedo**](https://github.com/shawnxa)
 * [**Hunter Leeves**](https://github.com/foyy)
-* [**Johnathan Tredway**](https://github.com/tredway91)
+* [**Jonathan Tredway**](https://github.com/tredway91)
 * [**Taro Yamashita** ](https://github.com/taroyamashita)
