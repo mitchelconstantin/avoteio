@@ -44,6 +44,7 @@ class Main extends Component {
   }
   
   componentDidMount() {
+    localStorage.clear();
     // Go get the current userId (null if not signed in) and roomId from the server
     const {roomId} = this.props.match.params;
     axios.post(`/api/rooms/${roomId}`)
@@ -66,25 +67,37 @@ class Main extends Component {
   }
 
   upvoteSong(song) {
-    // Update the song in the db and emit a songVote event to the server socket
-    axios.post('/api/upvoteSong', {song})
-    .then(() => {
-      this.socket.emit('songVote');
-    })
-    .catch(err => {
-      console.log(err);
-    });
+    if (!localStorage.getItem('spotify_ids') || !JSON.parse(localStorage.getItem('spotify_ids'))[song.spotify_id]) {
+      let spotify_ids = JSON.parse(localStorage.getItem('spotify_ids')) || {};
+      spotify_ids[song.spotify_id] = true;
+      localStorage.setItem('spotify_ids', JSON.stringify(spotify_ids));
+
+      // Update the song in the db and emit a songVote event to the server socket
+      axios.post('/api/upvoteSong', { song })
+        .then(() => {
+          this.socket.emit('songVote');
+        })
+        .catch(err => {
+          console.log(err);
+        });
+    }
   }
 
   downvoteSong(song) {
-    // Update the song in the db and emit a songVote event to the server socket
-    axios.post('/api/downvoteSong', {song})
-    .then(() => {
-      this.socket.emit('songVote');
-    })
-    .catch(err => {
-      console.log(err);
-    });
+    if (!localStorage.getItem('spotify_ids') || !JSON.parse(localStorage.getItem('spotify_ids'))[song.spotify_id]) {
+      let spotify_ids = JSON.parse(localStorage.getItem('spotify_ids')) || {};
+      spotify_ids[song.spotify_id] = true;
+      localStorage.setItem('spotify_ids', JSON.stringify(spotify_ids));
+
+      // Update the song in the db and emit a songVote event to the server socket
+      axios.post('/api/downvoteSong', { song })
+        .then(() => {
+          this.socket.emit('songVote');
+        })
+        .catch(err => {
+          console.log(err);
+        });
+    }
   }
 
   async getHostId() {
@@ -189,6 +202,7 @@ class Main extends Component {
     // Clear all timeouts when they navigate to another room/render any other component in it's place
     clearTimeout(this.setPlayNextSong);
     clearTimeout(this.updateNextSongTimer);
+    localStorage.clear();
   }
 
   render() {
