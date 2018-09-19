@@ -24,9 +24,8 @@ class Main extends Component {
     this.getSongStatus = this.getSongStatus.bind(this);
     this.playNextSong = this.playNextSong.bind(this);
     this.addSong = this.addSong.bind(this);
-    this.upvoteSong = this.upvoteSong.bind(this);
-    this.downvoteSong = this.downvoteSong.bind(this);
     this.getCurrentSong = this.getCurrentSong.bind(this);
+    this.vote = this.vote.bind(this);
 
     // Listen for socket events and respond accordingly
     this.socket = io.connect();
@@ -66,14 +65,15 @@ class Main extends Component {
     this.pollCurrentSong(); // Start polling spotify for the host's currently playing song
   }
 
-  upvoteSong(song) {
+  vote(song, voteDirection) {
     if (!localStorage.getItem('spotify_ids') || !JSON.parse(localStorage.getItem('spotify_ids'))[song.spotify_id]) {
       let spotify_ids = JSON.parse(localStorage.getItem('spotify_ids')) || {};
       spotify_ids[song.spotify_id] = true;
       localStorage.setItem('spotify_ids', JSON.stringify(spotify_ids));
 
       // Update the song in the db and emit a songVote event to the server socket
-      axios.post('/api/upvoteSong', { song })
+      let voteEndpoint = voteDirection === 'up' ? '/api/upvoteSong' : '/api/downvoteSong';
+      axios.post(voteEndpoint, { song })
         .then(() => {
           this.socket.emit('songVote');
         })
@@ -81,23 +81,7 @@ class Main extends Component {
           console.log(err);
         });
     }
-  }
-
-  downvoteSong(song) {
-    if (!localStorage.getItem('spotify_ids') || !JSON.parse(localStorage.getItem('spotify_ids'))[song.spotify_id]) {
-      let spotify_ids = JSON.parse(localStorage.getItem('spotify_ids')) || {};
-      spotify_ids[song.spotify_id] = true;
-      localStorage.setItem('spotify_ids', JSON.stringify(spotify_ids));
-
-      // Update the song in the db and emit a songVote event to the server socket
-      axios.post('/api/downvoteSong', { song })
-        .then(() => {
-          this.socket.emit('songVote');
-        })
-        .catch(err => {
-          console.log(err);
-        });
-    }
+    
   }
 
   async getHostId() {
@@ -215,8 +199,7 @@ class Main extends Component {
           <SongList 
             songBank={this.state.songBank}
             dropdownSongs={this.dropdownSongs}
-            upvoteSong={this.upvoteSong}
-            downvoteSong={this.downvoteSong}
+            vote={this.vote}
           />
           <SearchBar
             updateSongBank={this.updateSongBank}
