@@ -1,6 +1,6 @@
 import React from 'react';
 
-const CurrentSong = props => (
+const CurrentSong = (props) => (
   <div className="current-song">
     <div className="current-image">
       <img src={props.song.image} alt="song's image" />
@@ -12,6 +12,10 @@ const CurrentSong = props => (
       <div className="current-artist">
         <p>{props.song.artist}</p>
       </div>
+    </div>
+    <div>
+      <button onClick={() => props.skipSong()}>Skip Song</button>
+      <p>Skip Count: {props.skipVoteCount}</p>
     </div>
   </div>
 );

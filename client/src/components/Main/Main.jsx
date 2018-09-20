@@ -17,7 +17,8 @@ class Main extends Component {
       roomHostId: null,
       roomName: '',
       userId: null,
-      playNextSong: false
+      playNextSong: false,
+      skipVoteCount: 0
     };
 
     this.checkSongStatus = null;
@@ -28,6 +29,8 @@ class Main extends Component {
     this.addSong = this.addSong.bind(this);
     this.getCurrentSong = this.getCurrentSong.bind(this);
     this.vote = this.vote.bind(this);
+    this.skipSong = this.skipSong.bind(this);
+    this.getSkipVoteCount = this.getSkipVoteCount.bind(this);
 
     // Listen for socket events and respond accordingly
     this.socket = io.connect();
@@ -42,14 +45,17 @@ class Main extends Component {
     this.socket.on('songWasVoted', () => {
       this.getAllSongs();
     });
+
+    this.socket.on('skipSongWasClicked', () => {
+      this.getSkipVoteCount();
+    });
   }
 
   componentDidMount() {
     localStorage.clear();
     // Go get the current userId (null if not signed in) and roomId from the server
     const { roomId } = this.props.match.params;
-    axios
-      .post(`/api/rooms/${roomId}`)
+    axios.post(`/api/rooms/${roomId}`)
       .then(({ data }) => {
         this.setState({
           roomID: roomId,
@@ -93,9 +99,7 @@ class Main extends Component {
 
   async getHostId() {
     // Get the host of the room that you just entered (so all users in the room can use their access token)
-    const {
-      data: { roomHostId }
-    } = await axios.get('/spotify/roomHost');
+    const { data: { roomHostId } } = await axios.get('/spotify/roomHost');
     this.setState({
       roomHostId
     });
@@ -113,9 +117,7 @@ class Main extends Component {
     // Ask Spotify for the host's currently playing song
 
     // 👇🏼 Should really be inside a try...catch block for legit error handling
-    const {
-      data: { songData }
-    } = await axios.get('/spotify/currentSong');
+    const { data: { songData } } = await axios.get('/spotify/currentSong');
     this.setState({
       currentSong: songData,
       currentLyrics: songData.lyrics
@@ -124,30 +126,50 @@ class Main extends Component {
 
   addSong(song) {
     // Add a song to the current room and emit an addSong event to the server
-    axios
-      .post('/api/saveSong', { song })
+    axios.post('/api/saveSong', { song })
       .then(() => {
         this.socket.emit('addSong');
       })
-      .catch(function(error) {
-        console.log('POST failed', error);
+      .catch(function (error) {
+        console.log('POST failed', error)
       });
+  }
+
+  skipSong() {
+    axios.post('/api/skipsong')
+      .then(() => {
+        this.socket.emit('skipVote');
+      })
+      .catch(console.log);
+  }
+
+  getSkipVoteCount() {
+    axios.get('/api/skipsong')
+      .then(({ data }) => {
+        this.setState({ skipVoteCount: data })
+      })
+      .then(() => {
+        if (this.state.skipVoteCount > 10 && this.state.userId === this.state.roomHostId) {
+          clearTimeout(this.setPlayNextSong);
+          this.playNextSong();
+        }
+      })
+      .catch(console.log);
   }
 
   getAllSongs() {
     // Get all unplayed songs for the current room
-    axios
-      .get('/api/getAllSongs', {
-        params: {
-          roomID: this.state.roomID
-        }
-      })
+    axios.get('/api/getAllSongs', {
+      params: {
+        roomID: this.state.roomID
+      }
+    })
       .then(({ data }) => {
         this.setState({
           songBank: data
         });
       })
-      .catch(error => {
+      .catch((error) => {
         console.log(error);
       });
   }
@@ -191,13 +213,16 @@ class Main extends Component {
 
     // Once Spotify successfully plays the song, mark the song as played in the db
     // 👇🏼 Shitty mix of asyn/await & promises (some desperate debugging caused this)
-    await axios
-      .post('/api/markSongPlayed', {
-        songObj: song
-      })
+    await axios.post('/api/markSongPlayed', {
+      songObj: song
+    })
       .then(() => {
         this.getAllSongs();
-      });
+        if (this.state.userId === this.state.roomHostId) {
+          this.socket.emit('skipVote');
+        }
+      })
+      .catch(console.log);
   }
 
   componentWillUnmount() {
@@ -208,11 +233,12 @@ class Main extends Component {
   }
 
   render() {
-    let currentSong = this.state.currentSong ? (
-      <CurrentSong song={this.state.currentSong} />
-    ) : (
-      ''
-    );
+    let currentSong = this.state.currentSong ?
+      <CurrentSong
+        song={this.state.currentSong}
+        skipVoteCount={this.state.skipVoteCount}
+        skipSong={this.skipSong}
+      /> : "";
     return (
       <div className="main">
         <h1>Welcome to your Avoteio room!</h1>

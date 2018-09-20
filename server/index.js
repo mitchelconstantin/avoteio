@@ -70,4 +70,8 @@ io.on('connection', socket => {
   socket.on('songVote', () => {
     io.sockets.emit('songWasVoted');
   });
+
+  socket.on('skipVote', () => {
+    io.sockets.emit('skipSongWasClicked');
+  });
 });
