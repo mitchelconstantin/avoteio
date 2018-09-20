@@ -1,9 +1,9 @@
 import React from 'react';
 
-const CurrentSong = (props)=>(
+const CurrentSong = props => (
   <div className="current-song">
     <div className="current-image">
-      <img src={props.song.image} alt="song's image"/>
+      <img src={props.song.image} alt="song's image" />
     </div>
     <div className="current-info">
       <div className="current-title">
@@ -16,4 +16,4 @@ const CurrentSong = (props)=>(
   </div>
 );
 
-export default CurrentSong; 
+export default CurrentSong;

@@ -17,14 +17,16 @@ const cors = require('cors');
 const db = require('../database/index');
 const app = express();
 
-app.use(session({
-  secret: process.env.SESSION_SECRET,
-  resave: false,
-  saveUninitialized: true,
-  cookie: {
-    maxAge: 1000 * 60 * 60 * 24, //Set for one day
-  }
-}));
+app.use(
+  session({
+    secret: process.env.SESSION_SECRET,
+    resave: false,
+    saveUninitialized: true,
+    cookie: {
+      maxAge: 1000 * 60 * 60 * 24 //Set for one day
+    }
+  })
+);
 
 app.use(cors());
 
@@ -32,12 +34,13 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({
-  extended: true
-}));
+app.use(
+  bodyParser.urlencoded({
+    extended: true
+  })
+);
 
 app.use(express.static(__dirname + '/../client/dist'));
-
 
 app.use('/api', apiRoutes);
 app.use('/auth', authRoutes);
@@ -56,7 +59,7 @@ const server = app.listen(port, () => {
 
 const io = require('socket.io')(server);
 
-io.on('connection', (socket) => {
+io.on('connection', socket => {
   console.log('WOOHOO', socket.id);
 
   // Set up event listeners
