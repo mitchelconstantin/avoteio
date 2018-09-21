@@ -323,12 +323,6 @@ button:hover {
     display: none;
   }
 
-  .search {
-    margin-right: auto;
-    margin-left: auto;
-    max-width: 80%;
-  }
-
 }
 .lyric-box {
   overflow: auto;
