@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const db = require('../../../database/index');
-let skipCount = 0;
+const { incrementSkipVoteCount, zeroSkipVoteCount, getSkipVoteCount, getUserCount } = require('../../../helpers');
 
 router.get('/isLoggedIn', (req, res) => {
   res.json(req.session.spotifyId || null);
@@ -69,7 +69,7 @@ router.post('/markSongPlayed', (req, res) => {
       console.log('error updating song played status');
       res.sendStatus(500);
     } else {
-      skipCount = 0;
+      zeroSkipVoteCount();
       res.json(result);
     }
   });
@@ -100,12 +100,13 @@ router.post('/downvoteSong', (req, res) => {
 });
 
 router.post('/skipsong', (req, res) => {
-  skipCount++;
+  incrementSkipVoteCount();
   res.end();
 });
 
 router.get('/skipsong', (req, res) => {
-  res.send(JSON.stringify(skipCount));
-})
+  let skipVoteStats = JSON.stringify(Math.round((getSkipVoteCount() / getUserCount()) * 100));
+  res.send(skipVoteStats);
+});
 
 module.exports = router;

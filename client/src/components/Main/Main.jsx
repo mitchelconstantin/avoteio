@@ -18,7 +18,8 @@ class Main extends Component {
       roomName: '',
       userId: null,
       playNextSong: false,
-      skipVoteCount: 0
+      skipVoteCount: 0,
+      showSkipBtn: true
     };
 
     this.checkSongStatus = null;
@@ -46,8 +47,12 @@ class Main extends Component {
       this.getAllSongs();
     });
 
-    this.socket.on('skipSongWasClicked', () => {
+    this.socket.on('updateSkipSongStats', () => {
       this.getSkipVoteCount();
+    });
+
+    this.socket.on('renderSkipBtn', () => {
+      this.setState({ showSkipBtn: true });
     });
   }
 
@@ -139,6 +144,7 @@ class Main extends Component {
     axios.post('/api/skipsong')
       .then(() => {
         this.socket.emit('skipVote');
+        this.setState({ showSkipBtn: false });
       })
       .catch(console.log);
   }
@@ -149,7 +155,7 @@ class Main extends Component {
         this.setState({ skipVoteCount: data })
       })
       .then(() => {
-        if (this.state.skipVoteCount > 10 && this.state.userId === this.state.roomHostId) {
+        if (this.state.skipVoteCount > 75 && this.state.userId === this.state.roomHostId) {
           clearTimeout(this.setPlayNextSong);
           this.playNextSong();
         }
@@ -220,6 +226,7 @@ class Main extends Component {
         this.getAllSongs();
         if (this.state.userId === this.state.roomHostId) {
           this.socket.emit('skipVote');
+          this.socket.emit('showSkipBtn')
         }
       })
       .catch(console.log);
@@ -238,6 +245,7 @@ class Main extends Component {
         song={this.state.currentSong}
         skipVoteCount={this.state.skipVoteCount}
         skipSong={this.skipSong}
+        showSkipBtn={this.state.showSkipBtn}
       /> : "";
 
     return (

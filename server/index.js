@@ -16,6 +16,7 @@ const cors = require('cors');
 
 const db = require('../database/index');
 const app = express();
+const { incrementUserCount, decrementUserCount, decrementSkipVoteCount } = require('../helpers');
 
 app.use(
   session({
@@ -61,6 +62,8 @@ const io = require('socket.io')(server);
 
 io.on('connection', socket => {
   console.log('WOOHOO', socket.id);
+  incrementUserCount();
+  io.sockets.emit('updateSkipSongStats');
 
   // Set up event listeners
   socket.on('addSong', () => {
@@ -72,6 +75,16 @@ io.on('connection', socket => {
   });
 
   socket.on('skipVote', () => {
-    io.sockets.emit('skipSongWasClicked');
+    io.sockets.emit('updateSkipSongStats');
+  });
+
+  socket.on('showSkipBtn', () => {
+    io.sockets.emit('renderSkipBtn');
+  });
+
+  socket.on('disconnect', () => {
+    decrementUserCount();
+    decrementSkipVoteCount();
+    io.sockets.emit('updateSkipSongStats');
   });
 });
