@@ -181,6 +181,18 @@ const downvoteSongInRoom = (songObj, roomId, callback) => {
   });
 };
 
+const changeUserVote = (songObj, roomId, voteDirection, callback) => {
+  const id = songObj.song_id;
+  let query = voteDirection === 'up' ? 'UPDATE songs_rooms SET upvote = upvote + 1, downvote = downvote - 1 WHERE song_id = ? AND room_id = ?' : 'UPDATE songs_rooms SET downvote = downvote + 1, upvote = upvote - 1 WHERE song_id = ? AND room_id = ?';
+  connection.query(query, [id, roomId], (err, results) => {
+    if (err) {
+      callback(err);
+    } else {
+      callback(null, results);
+    }
+  });
+}
+
 const addUser = (userObj, callback) => {
   connection.query('SELECT * FROM users WHERE spotify_id = ?', [userObj.spotify_id], (err, existingUser) => {
     if (err) {
@@ -256,5 +268,6 @@ module.exports = {
   getUserByRoomId,
   updateUserAccessTokenAndExpiresAt,
   getSongInRoom,
-  showAllUnplayedSongsInRoom
+  showAllUnplayedSongsInRoom,
+  changeUserVote
 };

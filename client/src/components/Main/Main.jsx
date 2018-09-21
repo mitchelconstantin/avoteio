@@ -85,7 +85,7 @@ class Main extends Component {
       !JSON.parse(localStorage.getItem('spotify_ids'))[song.spotify_id]
     ) {
       let spotify_ids = JSON.parse(localStorage.getItem('spotify_ids')) || {};
-      spotify_ids[song.spotify_id] = true;
+      spotify_ids[song.spotify_id] = voteDirection;
       localStorage.setItem('spotify_ids', JSON.stringify(spotify_ids));
 
       // Update the song in the db and emit a songVote event to the server socket
@@ -99,6 +99,23 @@ class Main extends Component {
         .catch(err => {
           console.log(err);
         });
+    } else { // have already voted on song
+      if (JSON.parse(localStorage.getItem('spotify_ids'))[song.spotify_id] !== voteDirection) {
+        axios
+          .post('/api/changeUserVote', { 
+            song,
+            voteDirection
+          })
+          .then(() => {
+            let spotify_ids = JSON.parse(localStorage.getItem('spotify_ids'));
+            spotify_ids[song.spotify_id] = voteDirection;
+            localStorage.setItem('spotify_ids', JSON.stringify(spotify_ids));
+            this.socket.emit('songVote');
+          })
+          .catch(err => {
+            console.log(err);
+          });
+      }
     }
   }
 

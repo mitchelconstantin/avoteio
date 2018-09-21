@@ -99,6 +99,21 @@ router.post('/downvoteSong', (req, res) => {
   });
 });
 
+router.post('/changeUserVote', (req, res) => {
+  const { song, voteDirection } = req.body;
+
+  console.log('song: ', song);
+  console.log('voteDirection: ', voteDirection);
+  db.changeUserVote(song, req.session.roomId, voteDirection, (err) => {
+    if (err) {
+      console.log(err);
+      res.sendStatus(500);
+    } else {
+      res.end();
+    }
+  });
+});
+
 router.post('/skipsong', (req, res) => {
   incrementSkipVoteCount();
   res.end();

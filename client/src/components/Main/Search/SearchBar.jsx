@@ -63,7 +63,8 @@ class SearchBar extends Component {
           this.setState({
             loading: false,
             spotifyResults: items,
-            songSuggestions: []
+            songSuggestions: [],
+            input: ''
           });
         }).catch(function (error) {
           console.log(error)
