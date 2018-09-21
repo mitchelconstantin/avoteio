@@ -322,6 +322,13 @@ button:hover {
   .song-by {
     display: none;
   }
+
+  .search {
+    margin-right: auto;
+    margin-left: auto;
+    max-width: 80%;
+  }
+
 }
 .lyric-box {
   overflow: auto;
@@ -330,4 +337,23 @@ button:hover {
   margin-bottom: 25px;
   padding: 5px;
   background: rgba(255, 255, 255, 0.4);
+}
+
+.song-suggestion-container {
+  width: 90%;
+  margin-left: auto;
+  margin-right: auto;
+  text-align: center;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 5px;
+  min-width: 80%;
+}
+
+.song-suggestion-album-art {
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.song-suggestion-album-art:hover {
+  cursor: pointer;
 }

@@ -3,7 +3,7 @@ const router = express.Router();
 const btoa = require('btoa');
 const db = require('../../../database/index');
 const axios = require('axios');
-var lyrics = require('lyric-get');
+const lyrics = require('lyric-get');
 
 const getUserByRoomId = (req, res, next) => {
   db.getUserByRoomId(req.session.roomId, (err, [user]) => {
@@ -89,7 +89,7 @@ router.get('/search', async (req, res) => {
     params: {
       q: q,
       type: 'track',
-      limit: 20
+      limit: 10
     }
   };
 

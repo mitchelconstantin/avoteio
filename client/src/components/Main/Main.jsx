@@ -239,6 +239,7 @@ class Main extends Component {
         skipVoteCount={this.state.skipVoteCount}
         skipSong={this.skipSong}
       /> : "";
+
     return (
       <div className="main">
         <h1>Welcome to your Avoteio room!</h1>
