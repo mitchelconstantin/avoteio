@@ -49,6 +49,14 @@ button:hover {
   align-items: center;
 }
 
+.bsb-main{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background-image: url("../images/bsb-background.jpg");
+  background-size: cover;
+}
+
 .center {
   width: 600px;
   height: 70vh;
@@ -137,6 +145,18 @@ button:hover {
   border: 1px solid rgba(255, 255, 255, 0.2);
   background: rgb(83, 83, 83);
   overflow: scroll;
+}
+
+.bsb-song-list {
+  height: 100%;
+  width: 100%;
+  padding: 20px;
+  border-top-left-radius: 5px;
+  border-top-right-radius: 5px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  overflow: scroll;
+  background-image: url("../images/bsb-song-list.jpg");
+  background-size: cover;
 }
 
 .song-list-entry {
@@ -355,7 +375,7 @@ button:hover {
 }
 
 .marquee2 {
-  width: 100%
+  width: 100%;
   display: inline-block;
   padding-top: 60%;
   animation: marquee 200s linear infinite;
@@ -428,4 +448,14 @@ div.react-sweet-progress-line {
   height: 25px;
   color: white;
   background-color: rgb(2, 169, 22);
+}
+
+.bsb-btn {
+  border-radius: 5px;
+  width: 100%;
+  height: 25px;
+  color: white;
+  background-color: rgb(2, 169, 22);
+  text-align: center;
+  margin-bottom: 5%;
 }

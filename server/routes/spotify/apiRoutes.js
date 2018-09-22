@@ -90,7 +90,7 @@ router.get('/search', async (req, res) => {
       q: q,
       type: 'track',
       limit: 10,
-      offset: 1
+      offset: 0
     }
   };
 
@@ -98,6 +98,7 @@ router.get('/search', async (req, res) => {
   if (getBSBmode()) {
     options.params.q = 'backstreet+boys';
     options.params.limit = 20;
+    options.params.offset = 1;
   }
 
   try {

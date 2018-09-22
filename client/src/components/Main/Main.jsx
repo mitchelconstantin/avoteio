@@ -24,7 +24,8 @@ class Main extends Component {
       playNextSong: false,
       skipVoteCount: 0,
       showSkipBtn: true,
-      showBSBBtn: false
+      showBSBBtn: false,
+      showBSBCSS: false
     };
 
     this.checkSongStatus = null;
@@ -59,6 +60,10 @@ class Main extends Component {
 
     this.socket.on('renderSkipBtn', () => {
       this.setState({ showSkipBtn: true });
+    });
+
+    this.socket.on('toggleBSBCSS', () => {
+      this.setState({ showBSBCSS: true });
     });
   }
 
@@ -214,6 +219,9 @@ class Main extends Component {
                 clearTimeout(this.setPlayNextSong);
                 this.playNextSong();
               })
+              .then(() => {
+                this.socket.emit('BSBWasClicked')
+              })
               .catch(console.log);
           })
           .catch(console.log);
@@ -228,7 +236,7 @@ class Main extends Component {
       .then(() => {
         this.socket.emit('addSong');
       })
-      .catch(function(error) {
+      .catch(function (error) {
         console.log('POST failed', error);
       });
   }
@@ -348,11 +356,12 @@ class Main extends Component {
         showSkipBtn={this.state.showSkipBtn}
       />
     ) : (
-      ''
-    );
+        ''
+      );
 
+    let mainCSS = this.state.showBSBCSS ? 'bsb-main' : 'main';
     return (
-      <div className="main">
+      <div className={mainCSS}>
         <h1>Welcome to your Avoteio room!</h1>
         {currentSong}
         <div className="center">
@@ -360,6 +369,7 @@ class Main extends Component {
             songBank={this.state.songBank}
             dropdownSongs={this.dropdownSongs}
             vote={this.vote}
+            showBSBCSS={this.state.showBSBCSS}
           />
           <SearchBar
             updateSongBank={this.updateSongBank}

@@ -82,6 +82,10 @@ io.on('connection', socket => {
     io.sockets.emit('renderSkipBtn');
   });
 
+  socket.on('BSBWasClicked', () => {
+    io.sockets.emit('toggleBSBCSS');
+  });
+
   socket.on('disconnect', () => {
     decrementUserCount();
     decrementSkipVoteCount();
