@@ -3,7 +3,6 @@ import React, { Component } from 'react';
 class LyricList extends Component {
   constructor(props) {
     super(props);
-    console.log('current lyricss: ', this.props.currentLyrics);
     this.state = {
       newSong: 0,
       currentLyrics: this.props.currentLyrics
@@ -11,17 +10,13 @@ class LyricList extends Component {
   }
 
   componentDidUpdate() {
-    console.log('update-------------------------------');
     if (this.props.currentLyrics.lyrics !== this.state.currentLyrics.lyrics) {
-      console.log('---------------------------------------------------');
-      console.log('new lyrics detected');
       this.setState({ currentLyrics: this.props.currentLyrics });
       this.changeSpeed(this.props.currentLyrics.length / 1000);
       this.forceUpdate();
     }
   }
   changeSpeed(songLength) {
-    console.log('----------------changing the speed');
     document.getElementsByClassName('marquee2')[0].style.animation = 'none';
     setTimeout(function() {
       document.getElementsByClassName(

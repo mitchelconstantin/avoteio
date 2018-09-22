@@ -164,9 +164,7 @@ router.get('/currentSong', async (req, res) => {
           progress_ms: data.progress_ms
         }
       };
-      console.log('songobj');
-      console.log(songObj);
-
+      
       const removeParens = (songName, songNoParens = [], skip = false) => {
         Array.from(songName).forEach(element => {
           if (element === '(') {

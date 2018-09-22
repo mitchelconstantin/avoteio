@@ -2,6 +2,9 @@ const express = require('express');
 const router = express.Router();
 const db = require('../../../database/index');
 const { incrementSkipVoteCount, zeroSkipVoteCount, getSkipVoteCount, getUserCount, getBSBmode, toggleBSBmode } = require('../../../helpers');
+const server = require('../../index.js');
+const io = require('socket.io')(server);
+
 
 router.get('/isLoggedIn', (req, res) => {
   res.json(req.session.spotifyId || null);
@@ -24,6 +27,7 @@ router.post('/rooms/:roomId', (req, res) => {
 
 router.get('/toggleBSBmode', (req, res) => {
   toggleBSBmode();
+  io.sockets.emit('toggleBSBmode');
   res.end();
 });
 
@@ -118,6 +122,7 @@ router.post('/downvoteSong', (req, res) => {
 
 router.post('/BSBchangeUserVote', (req, res) => {
   const { song } = req.body;
+  console.log('im at bsb voting endpoint: ', song);
   db.changeBSBuserVote(song, req.session.roomId, (err) => {
     if (err) {
       console.log(err);

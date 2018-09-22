@@ -88,3 +88,5 @@ io.on('connection', socket => {
     io.sockets.emit('updateSkipSongStats');
   });
 });
+
+module.exports.server = server;

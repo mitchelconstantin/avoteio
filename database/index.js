@@ -183,6 +183,7 @@ const upvoteBSBSongs = (songObj, roomId, callback) => {
 
 const changeBSBuserVote = (songObj, roomId, callback) => {
   const id = songObj.spotify_id;
+  console.log('song id in DB fnc: ', id);
   connection.query('UPDATE songs_rooms SET upvote = upvote + 100 WHERE songs_rooms.song_id = (SELECT songs.id FROM songs WHERE songs.spotify_id = ?) AND songs_rooms.room_id = ?', [id, roomId], (err, results) => {
     if (err) {
       callback(err);

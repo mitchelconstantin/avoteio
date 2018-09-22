@@ -61,6 +61,11 @@ class Main extends Component {
     this.socket.on('renderSkipBtn', () => {
       this.setState({ showSkipBtn: true });
     });
+
+    this.socket.on('toggleBSBmode', () => {
+      console.log('im in bsb mode!!');
+      this.setState({ bsbMode: !this.state.bsbMode });
+    });
   }
 
   componentDidMount() {
@@ -89,21 +94,14 @@ class Main extends Component {
 
   vote(song, voteDirection) {
     if (this.state.bsbMode) {
-      axios
-        .post('/api/BSBchangeUserVote', {
-          song,
-          voteDirection
-        })
+      axios.post('/api/BSBchangeUserVote', { song })
         .then(() => {
           this.socket.emit('songVote');
         })
         .catch(err => {
           console.log(err);
         });
-    } else if (
-      !localStorage.getItem('spotify_ids') ||
-      !JSON.parse(localStorage.getItem('spotify_ids'))[song.spotify_id]
-    ) {
+    } else if ( !localStorage.getItem('spotify_ids') || !JSON.parse(localStorage.getItem('spotify_ids'))[song.spotify_id] ) {
       let spotify_ids = JSON.parse(localStorage.getItem('spotify_ids')) || {};
       spotify_ids[song.spotify_id] = voteDirection;
       localStorage.setItem('spotify_ids', JSON.stringify(spotify_ids));
@@ -175,9 +173,6 @@ class Main extends Component {
     const {
       data: { songData }
     } = await axios.get('/spotify/currentSong');
-    console.log('here is all the song data I have: ');
-    console.log(songData);
-
     this.setState({
       currentSong: songData,
       currentLyrics: {
@@ -219,7 +214,6 @@ class Main extends Component {
                 }
               })
               .then(({ data }) => {
-                console.log('im here! --> bsbmode: ', this.state.bsbMode);
                 this.setState({
                   songBank: data,
                   bsbMode: !this.state.bsbMode
