@@ -24,6 +24,9 @@ class LyricList extends Component {
     }
     let lineCount = this.props.currentLyrics.lyrics.split(/\r\n|\r|\n/).length;
     let lineToStart = Math.floor((percentComplete / 100) * lineCount);
+    if (lineToStart < 1) {
+      lineToStart = 1;
+    }
     let linesToRemove = lineToStart - 1;
 
     if (this.props.currentLyrics.lyrics !== this.state.currentLyrics.lyrics) {
