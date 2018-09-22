@@ -14,7 +14,7 @@ class Main extends Component {
       songBank: [],
       currentSong: null,
       currentLyrics: {
-        lyrics: 'I am lyridd\n \n \n \n \n \n \n \n c',
+        lyrics: `Loading Lyrics.........`,
         length: 0
       },
       roomID: null,
