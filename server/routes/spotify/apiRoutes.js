@@ -184,8 +184,21 @@ router.get('/currentSong', async (req, res) => {
 
       lyrics.get(data.item.artists[0].name, songNoParens, function (err2, res2) {
         if (err2) {
-          songObj.songData.lyrics = 'none found';
-          res.json(songObj);
+          if (songNoParens.includes('-')) {
+            songNoParens = songNoParens.slice(0, songNoParens.indexOf('-'));
+            lyrics.get(data.item.artists[0].name, songNoParens, (err3, res3) => {
+              if (err3) {
+                songObj.songData.lyrics = 'none found';
+                res.json(songObj);
+              } else {
+                songObj.songData.lyrics = res3;
+                res.json(songObj);
+              }
+            })
+          } else {
+            songObj.songData.lyrics = 'none found';
+            res.json(songObj);
+          }
         } else {
           songObj.songData.lyrics = res2;
           res.json(songObj);
