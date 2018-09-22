@@ -19,7 +19,7 @@ class SearchBar extends Component {
     this.selectSong = this.selectSong.bind(this);
     this.getSongSuggestions = this.getSongSuggestions.bind(this);
   }
-  
+
   componentDidMount() {
     this.getSongSuggestions();
   }
@@ -81,7 +81,7 @@ class SearchBar extends Component {
 
   render() {
     let carouselContents = this.state.spotifyResults.length > 0 ? this.state.spotifyResults : this.state.songSuggestions;
-    
+
     const sliderSettings = {
       dots: true,
       infinite: true,
@@ -97,7 +97,7 @@ class SearchBar extends Component {
           <button className="search-submit" onClick={(e) => this.handleClick(e)}>Search</button>
         </div>
         {/* <DropdownSongList spotifyResults={this.state.spotifyResults} selectSong={this.selectSong} /> */}
-        {this.state.loading ? null : 
+        {this.state.loading ? null :
           <Slider {...sliderSettings}>
             {
               carouselContents.map((suggestion, i) => (

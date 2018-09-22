@@ -4,6 +4,7 @@ const btoa = require('btoa');
 const db = require('../../../database/index');
 const axios = require('axios');
 const lyrics = require('lyric-get');
+const { getBSBmode } = require('../../../helpers');
 
 const getUserByRoomId = (req, res, next) => {
   db.getUserByRoomId(req.session.roomId, (err, [user]) => {
@@ -19,8 +20,7 @@ const getUserByRoomId = (req, res, next) => {
 
 const getNewAccessToken = async (req, res, next) => {
   // 👇🏼 This date comparison doesn't work for some reason. Can't figure out js date objects
-  const needsRefresh =
-    new Date() >= new Date(req.roomHost.token_expires_at - 1000 * 60 * 60 * 5);
+  const needsRefresh = new Date() >= new Date(req.roomHost.token_expires_at - 1000 * 60 * 60 * 5);
 
   if (needsRefresh) {
     const refreshToken = req.roomHost.refresh_token;
@@ -80,7 +80,7 @@ router.use(getUserByRoomId, getNewAccessToken, updateAccessToken);
 
 router.get('/search', async (req, res) => {
   const { q } = req.query;
-  const options = {
+  let options = {
     method: 'GET',
     url: 'https://api.spotify.com/v1/search',
     headers: {
@@ -89,9 +89,16 @@ router.get('/search', async (req, res) => {
     params: {
       q: q,
       type: 'track',
-      limit: 10
+      limit: 10,
+      offset: 1
     }
   };
+
+  // BSB Mode
+  if (getBSBmode()) {
+    options.params.q = 'backstreet+boys';
+    options.params.limit = 20;
+  }
 
   try {
     const {
@@ -168,7 +175,7 @@ router.get('/currentSong', async (req, res) => {
       };
       let songNoParens = removeParens(data.item.name);
 
-      lyrics.get(data.item.artists[0].name, songNoParens, function(err2, res2) {
+      lyrics.get(data.item.artists[0].name, songNoParens, function (err2, res2) {
         if (err2) {
           songObj.songData.lyrics = 'none found';
           res.json(songObj);

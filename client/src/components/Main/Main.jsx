@@ -5,6 +5,7 @@ import CurrentSong from './CurrentSong.jsx';
 import SearchBar from './Search/SearchBar.jsx';
 import SongList from './SongList.jsx';
 import LyricList from './LyricList.jsx';
+import Modes from './Modes.jsx';
 
 class Main extends Component {
   constructor(props) {
@@ -19,7 +20,8 @@ class Main extends Component {
       userId: null,
       playNextSong: false,
       skipVoteCount: 0,
-      showSkipBtn: true
+      showSkipBtn: true,
+      showBSBBtn: false
     };
 
     this.checkSongStatus = null;
@@ -32,6 +34,7 @@ class Main extends Component {
     this.vote = this.vote.bind(this);
     this.skipSong = this.skipSong.bind(this);
     this.getSkipVoteCount = this.getSkipVoteCount.bind(this);
+    this.clickBSBmode = this.clickBSBmode.bind(this);
 
     // Listen for socket events and respond accordingly
     this.socket = io.connect();
@@ -102,7 +105,7 @@ class Main extends Component {
     } else { // have already voted on song
       if (JSON.parse(localStorage.getItem('spotify_ids'))[song.spotify_id] !== voteDirection) {
         axios
-          .post('/api/changeUserVote', { 
+          .post('/api/changeUserVote', {
             song,
             voteDirection
           })
@@ -124,6 +127,10 @@ class Main extends Component {
     const { data: { roomHostId } } = await axios.get('/spotify/roomHost');
     this.setState({
       roomHostId
+    }, () => {
+      if (this.state.userId === this.state.roomHostId) {
+        this.setState({ showBSBBtn: true });
+      }
     });
   }
 
@@ -145,6 +152,50 @@ class Main extends Component {
       currentLyrics: songData.lyrics
     });
   }
+
+  clickBSBmode() {
+    axios.get('/api/toggleBSBmode')
+      .then(() => {
+        axios.get('/spotify/search', {
+          params: {
+            q: 'backstreet boys'
+          }
+        })
+          .then(({ data: { items } }) => {
+            items.forEach(songObj => {
+              this.addSong(songObj);
+            });
+            return items;
+          })
+          .then(items => {
+            items.forEach(songObjj => {
+              axios.post('/api/upvoteBSBSong', { song: songObjj })
+                .catch(console.log);
+            })
+          })
+          .then(() => {
+            axios.get('/api/getAllSongs', {
+              params: {
+                roomID: this.state.roomID
+              }
+            })
+              .then(({ data }) => {
+                this.setState({
+                  songBank: data
+                });
+              })
+              .then(() => {
+                clearTimeout(this.setPlayNextSong);
+                this.playNextSong();
+              })
+              .catch(console.log);
+          })
+          .catch(console.log);
+      })
+      .catch(console.log);
+  }
+
+
 
   addSong(song) {
     // Add a song to the current room and emit an addSong event to the server
@@ -243,7 +294,7 @@ class Main extends Component {
         this.getAllSongs();
         if (this.state.userId === this.state.roomHostId) {
           this.socket.emit('skipVote');
-          this.socket.emit('showSkipBtn')
+          this.socket.emit('showSkipBtn');
         }
       })
       .catch(console.log);
@@ -282,6 +333,7 @@ class Main extends Component {
             addSong={this.addSong}
           />
           <LyricList currentLyrics={this.state.currentLyrics} />
+          <Modes showBSBBtn={this.state.showBSBBtn} clickBSBmode={this.clickBSBmode} />
         </div>
       </div>
     );

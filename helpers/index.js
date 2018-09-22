@@ -1,5 +1,6 @@
 let userCount = 0;
 let skipVoteCount = 0;
+let BSBmode = false;
 
 module.exports.incrementUserCount = () => {
   userCount++;
@@ -30,3 +31,11 @@ module.exports.zeroSkipVoteCount = () => {
 module.exports.getSkipVoteCount = () => {
   return skipVoteCount;
 };
+
+module.exports.toggleBSBmode = () => {
+  BSBmode = !BSBmode;
+};
+
+module.exports.getBSBmode = () => {
+  return BSBmode;
+}

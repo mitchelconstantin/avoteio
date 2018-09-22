@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const db = require('../../../database/index');
-const { incrementSkipVoteCount, zeroSkipVoteCount, getSkipVoteCount, getUserCount } = require('../../../helpers');
+const { incrementSkipVoteCount, zeroSkipVoteCount, getSkipVoteCount, getUserCount, getBSBmode, toggleBSBmode } = require('../../../helpers');
 
 router.get('/isLoggedIn', (req, res) => {
   res.json(req.session.spotifyId || null);
@@ -20,6 +20,11 @@ router.post('/rooms/:roomId', (req, res) => {
       });
     }
   });
+});
+
+router.get('/toggleBSBmode', (req, res) => {
+  toggleBSBmode();
+  res.end();
 });
 
 router.post('/createRoom', (req, res) => {
@@ -87,6 +92,18 @@ router.post('/upvoteSong', (req, res) => {
   });
 });
 
+router.post('/upvoteBSBSong', (req, res) => {
+  const { song } = req.body;
+  db.upvoteBSBSongs(song, req.session.roomId, (err) => {
+    if (err) {
+      console.log(err);
+      res.sendStatus(500);
+    } else {
+      res.end();
+    }
+  });
+});
+
 router.post('/downvoteSong', (req, res) => {
   const { song } = req.body;
   db.downvoteSongInRoom(song, req.session.roomId, (err) => {
@@ -101,9 +118,6 @@ router.post('/downvoteSong', (req, res) => {
 
 router.post('/changeUserVote', (req, res) => {
   const { song, voteDirection } = req.body;
-
-  console.log('song: ', song);
-  console.log('voteDirection: ', voteDirection);
   db.changeUserVote(song, req.session.roomId, voteDirection, (err) => {
     if (err) {
       console.log(err);
