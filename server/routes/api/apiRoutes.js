@@ -91,10 +91,10 @@ router.post('/upvoteSong', (req, res) => {
     }
   });
 });
-
-router.post('/upvoteBSBSong', (req, res) => {
-  const { song } = req.body;
-  db.upvoteBSBSongs(song, req.session.roomId, (err) => {
+  
+  router.post('/upvoteBSBSong', (req, res) => {
+    const { song } = req.body;
+    db.upvoteBSBSongs(song, req.session.roomId, (err) => {
     if (err) {
       console.log(err);
       res.sendStatus(500);
@@ -107,6 +107,18 @@ router.post('/upvoteBSBSong', (req, res) => {
 router.post('/downvoteSong', (req, res) => {
   const { song } = req.body;
   db.downvoteSongInRoom(song, req.session.roomId, (err) => {
+    if (err) {
+      console.log(err);
+      res.sendStatus(500);
+    } else {
+      res.end();
+    }
+  });
+});
+
+router.post('/BSBchangeUserVote', (req, res) => {
+  const { song } = req.body;
+  db.changeBSBuserVote(song, req.session.roomId, (err) => {
     if (err) {
       console.log(err);
       res.sendStatus(500);

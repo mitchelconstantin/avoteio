@@ -24,7 +24,8 @@ class Main extends Component {
       playNextSong: false,
       skipVoteCount: 0,
       showSkipBtn: true,
-      showBSBBtn: false
+      showBSBBtn: false,
+      bsbMode: false
     };
 
     this.checkSongStatus = null;
@@ -87,7 +88,19 @@ class Main extends Component {
   }
 
   vote(song, voteDirection) {
-    if (
+    if (this.state.bsbMode) {
+      axios
+        .post('/api/BSBchangeUserVote', {
+          song,
+          voteDirection
+        })
+        .then(() => {
+          this.socket.emit('songVote');
+        })
+        .catch(err => {
+          console.log(err);
+        });
+    } else if (
       !localStorage.getItem('spotify_ids') ||
       !JSON.parse(localStorage.getItem('spotify_ids'))[song.spotify_id]
     ) {
@@ -206,8 +219,10 @@ class Main extends Component {
                 }
               })
               .then(({ data }) => {
+                console.log('im here! --> bsbmode: ', this.state.bsbMode);
                 this.setState({
-                  songBank: data
+                  songBank: data,
+                  bsbMode: !this.state.bsbMode
                 });
               })
               .then(() => {
