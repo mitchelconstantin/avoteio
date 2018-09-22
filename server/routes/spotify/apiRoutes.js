@@ -170,11 +170,9 @@ router.get('/currentSong', async (req, res) => {
 
       lyrics.get(data.item.artists[0].name, songNoParens, function(err2, res2) {
         if (err2) {
-          console.log('error');
           songObj.songData.lyrics = 'none found';
           res.json(songObj);
         } else {
-          console.log('success');
           songObj.songData.lyrics = res2;
           res.json(songObj);
         }

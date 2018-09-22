@@ -323,6 +323,12 @@ button:hover {
     display: none;
   }
 
+  .current-song {
+    width: 85%;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
 }
 .lyric-box {
   overflow: auto;
@@ -338,7 +344,7 @@ button:hover {
   margin-left: auto;
   margin-right: auto;
   text-align: center;
-  background: rgba(255, 255, 255, 0.1);
+  background: rgb(54, 54, 54, 0.7);
   border-radius: 5px;
   min-width: 80%;
 }
@@ -350,4 +356,45 @@ button:hover {
 
 .song-suggestion-album-art:hover {
   cursor: pointer;
+}
+
+.skip-song-container {
+  margin: 5px;
+  width: 100%;
+  display: flex;
+  align-content: center;
+}
+
+.skip-song-progress-bar-line {
+  width: 70%;
+  margin-right: auto;
+  margin-left: auto;
+  background: rgb(54, 54, 54, 0.9);
+  border-radius: 5px;
+}
+
+.skip-song-progress-bar-circle {
+  width: 30%;
+  margin-right: auto;
+  margin-left: auto;
+}
+
+div.react-sweet-progress-symbol {
+  color: white;
+}
+
+div.react-sweet-progress-line-inner {
+  background-color: rgb(2, 169, 22);
+}
+/*
+div.react-sweet-progress-line {
+  background-color: green;
+} */
+
+.skip-btn {
+  border-radius: 5px;
+  width: 100px;
+  height: 25px;
+  color: white;
+  background-color: rgb(2, 169, 22);
 }
